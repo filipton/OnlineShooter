@@ -58,6 +58,8 @@ public class NetworkSync : NetworkBehaviour
         }
 
         RpcMovePlayer(pos, rot, nid);
+        transform.position = pos;
+        transform.rotation = rot;
     }
 
     [ClientRpc]

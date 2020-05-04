@@ -90,17 +90,21 @@ public class OnlineShooting : NetworkBehaviour
 
         if(NextTime <= 0)
         {
-            if (Physics.Raycast(pos, origin, out RaycastHit hit, 1000, HitBoxLayer, QueryTriggerInteraction.UseGlobal))
+            if (Physics.Raycast(pos, origin, out RaycastHit hit, 10000, HitBoxLayer))
             {
-                Debug.DrawRay(pos, origin * 20, Color.green, 10);
+                print($"TRAFILES W COS! {hit.transform.gameObject.name} {hit.transform.gameObject.tag}");
                 if (hit.transform.gameObject.CompareTag("SO"))
                 {
                     RpcChangeMat(hit.transform.gameObject);
                 }
                 else if (hit.transform.gameObject.CompareTag("HitBox"))
                 {
+                    print("Trafiles w cokolwiek");
+
                     HitBox hitB = hit.transform.gameObject.GetComponent<HitBox>();
                     hitB.plyHealth.CmdRemoveHealth(hitB.HitDmg());
+
+                    print($"TRAFILES W {hitB.name}");
 
                     if (hitB.HighLight)
                     {
@@ -116,7 +120,6 @@ public class OnlineShooting : NetworkBehaviour
     public void RpcChangeMat(GameObject gb)
     {
         gb.GetComponent<MeshRenderer>().material = Mat;
-        print("HIT!");
     }
 
     [TargetRpc]
