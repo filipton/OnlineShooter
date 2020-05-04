@@ -92,7 +92,8 @@ public class OnlineShooting : NetworkBehaviour
         //pos += origin * 0.4f;
         if(NextTime <= 0)
         {
-            RaycastHit[] hits = Physics.RaycastAll(pos, origin);
+            //RaycastHit[] hits = Physics.RaycastAll(pos, origin);
+            RaycastHit[] hits = Physics.RaycastAll(cam.transform.position, cam.transform.forward);
             List<RaycastHit> FiltredHits = hits.ToList();
 
             if(hits.Length > 0)
@@ -122,7 +123,7 @@ public class OnlineShooting : NetworkBehaviour
                 }
             }
 
-            NextTime = ShootRate;
+            NextTime = ShootRate - 0.1f;
         }
     }
 

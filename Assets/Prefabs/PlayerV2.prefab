@@ -4868,7 +4868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0
   NextTime: 0
   ShootRate: 0.15
   HitBoxLayer:
@@ -4908,6 +4908,7 @@ MonoBehaviour:
   syncInterval: 0.1
   Interval: 0.01
   Nid: {fileID: 0}
+  cam: {fileID: 2153106622755483276}
   MovementTroubleshootXZ: 0.400002
   MovementTroubleshootY: 9
   MaxXZ: 0

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking.Types;
 
@@ -18,6 +19,8 @@ public class PlayerHealth : NetworkBehaviour
     public GameObject Capsule;
     public GameObject Container;
 
+    TextMeshProUGUI healthText;
+
     private void Update()
     {
         if (KillPlayer)
@@ -25,6 +28,16 @@ public class PlayerHealth : NetworkBehaviour
             KillPlayer = false;
             if (isServer)
                 RpcKillPlayer();
+        }
+
+        if (isLocalPlayer)
+        {
+            if(healthText == null)
+            {
+                healthText = GameObject.FindGameObjectWithTag("HealthText").GetComponent<TextMeshProUGUI>();
+            }
+
+            healthText.text = Health.ToString();
         }
     }
 

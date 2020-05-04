@@ -10,6 +10,7 @@ public class NetworkSync : NetworkBehaviour
     public float Interval;
 
     public NetworkIdentity Nid;
+    public Camera cam;
 
     public float MovementTroubleshootXZ = 0.400002f;
     public float MovementTroubleshootY = 0.55f;
@@ -29,7 +30,7 @@ public class NetworkSync : NetworkBehaviour
     }
 
     [Command]
-    public void CmdMovePlayer(Vector3 pos, Quaternion rot, NetworkIdentity nid)
+    public void CmdMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot, NetworkIdentity nid)
     {
         if (old_position == null)
         {
@@ -57,18 +58,20 @@ public class NetworkSync : NetworkBehaviour
             old_position = pos;
         }
 
-        RpcMovePlayer(pos, rot, nid);
+        RpcMovePlayer(pos, rot, camRot, nid);
         transform.position = pos;
         transform.rotation = rot;
+        cam.transform.rotation = camRot;
     }
 
     [ClientRpc]
-    public void RpcMovePlayer(Vector3 pos, Quaternion rot, NetworkIdentity nid)
+    public void RpcMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot, NetworkIdentity nid)
     {
         if (Nid != nid)
         {
             transform.position = pos;
             transform.rotation = rot;
+            cam.transform.rotation = camRot;
         }
     }
 
@@ -87,7 +90,7 @@ public class NetworkSync : NetworkBehaviour
     {
         while (true)
         {
-            CmdMovePlayer(transform.position, transform.rotation, Nid);
+            CmdMovePlayer(transform.position, transform.rotation, cam.transform.rotation, Nid);
             yield return new WaitForSeconds(Interval);
         }
     }
