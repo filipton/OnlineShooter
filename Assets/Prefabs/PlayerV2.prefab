@@ -1408,7 +1408,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 20
   HighLight: 1
-  Mr: {fileID: 2153106621507836333}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106621860858193
 GameObject:
@@ -1549,7 +1548,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 20
   HighLight: 1
-  Mr: {fileID: 2153106621969918862}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106622348692804
 GameObject:
@@ -1660,7 +1658,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 80
   HighLight: 1
-  Mr: {fileID: 2153106622348692801}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106622366241192
 GameObject:
@@ -1771,7 +1768,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 20
   HighLight: 1
-  Mr: {fileID: 2153106622366241173}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106622382662790
 GameObject:
@@ -1882,7 +1878,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 20
   HighLight: 1
-  Mr: {fileID: 2153106622382662787}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106622383691907
 GameObject:
@@ -2064,7 +2059,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 20
   HighLight: 1
-  Mr: {fileID: 2153106622753554095}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106622755483265
 GameObject:
@@ -2094,7 +2088,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2153106622755483265}
   m_LocalRotation: {x: 0.20253094, y: 0, z: 0, w: 0.9792759}
-  m_LocalPosition: {x: 0, y: 0.58, z: 0.157}
+  m_LocalPosition: {x: 0, y: 0.874, z: 0.186}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4775135420451806976}
@@ -2287,7 +2281,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 60
   HighLight: 1
-  Mr: {fileID: 2153106623026619490}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106623152597034
 GameObject:
@@ -2397,7 +2390,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 100
   HighLight: 1
-  Mr: {fileID: 2153106623152597015}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106623215022786
 GameObject:
@@ -2508,7 +2500,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 20
   HighLight: 1
-  Mr: {fileID: 2153106623215022799}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106623228963652
 GameObject:
@@ -2619,7 +2610,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 20
   HighLight: 1
-  Mr: {fileID: 2153106623228963649}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2153106623410927604
 GameObject:
@@ -2730,7 +2720,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 20
   HighLight: 1
-  Mr: {fileID: 2153106623410927601}
   plyHealth: {fileID: 4658366328344393689}
 --- !u!1 &2189594192328771565
 GameObject:
@@ -4897,6 +4886,8 @@ MonoBehaviour:
   - {fileID: 2153106621969918860}
   - {fileID: 2153106623410927615}
   - {fileID: 2153106622382662785}
+  BulletHit: {fileID: 2284099713715121383, guid: d8ae18743509e3442a0dc6401df27e8d,
+    type: 3}
   Mat: {fileID: 2100000, guid: 5a26de236ce89e94b963be8fa2b7ade6, type: 2}
   cam: {fileID: 2153106622755483276}
   pml: {fileID: 2153106622755483264}

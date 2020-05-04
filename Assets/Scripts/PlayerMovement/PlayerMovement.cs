@@ -55,7 +55,6 @@ public class PlayerMovement : NetworkBehaviour
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            print("HIHI!");
             velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
         }
 

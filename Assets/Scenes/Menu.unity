@@ -386,7 +386,7 @@ MonoBehaviour:
   runInBackground: 1
   startOnHeadless: 1
   showDebugMessages: 0
-  serverTickRate: 30
+  serverTickRate: 128
   offlineScene: Assets/Scenes/Menu.unity
   onlineScene: Assets/Scenes/SampleScene.unity
   transport: {fileID: 1569880154}

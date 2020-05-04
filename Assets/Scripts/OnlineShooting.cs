@@ -2,6 +2,7 @@
 using Mirror.Examples.Pong;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class OnlineShooting : NetworkBehaviour
@@ -15,6 +16,8 @@ public class OnlineShooting : NetworkBehaviour
 
     public LayerMask HitBoxLayer;
     public HitBox[] HitBoxes;
+
+    public GameObject BulletHit;
 
     public Material Mat;
     public Camera cam;
@@ -45,7 +48,7 @@ public class OnlineShooting : NetworkBehaviour
             }
             if(Input.GetKey(KeyCode.Mouse0) && NextTimeP <= 0)
             {
-                CmdShoot(cam.transform.position, cam.transform.forward);
+                CmdShoot(cam.transform.position, cam.transform.forward, gameObject);
                 NextTimeP = ShootRate;
                 pml.rotationY += 1.5f;
             }
@@ -84,47 +87,50 @@ public class OnlineShooting : NetworkBehaviour
     }
 
     [Command]
-    public void CmdShoot(Vector3 pos, Vector3 origin)
+    public void CmdShoot(Vector3 pos, Vector3 origin, GameObject MyPlayer)
     {
-        pos += origin;
-
+        //pos += origin * 0.4f;
         if(NextTime <= 0)
         {
-            if (Physics.Raycast(pos, origin, out RaycastHit hit, 10000, HitBoxLayer))
+            RaycastHit[] hits = Physics.RaycastAll(pos, origin);
+            List<RaycastHit> FiltredHits = hits.ToList();
+
+            if(hits.Length > 0)
             {
-                print($"TRAFILES W COS! {hit.transform.gameObject.name} {hit.transform.gameObject.tag}");
-                if (hit.transform.gameObject.CompareTag("SO"))
+                foreach(RaycastHit hit in hits)
                 {
-                    RpcChangeMat(hit.transform.gameObject);
-                }
-                else if (hit.transform.gameObject.CompareTag("HitBox"))
-                {
-                    print("Trafiles w cokolwiek");
-
-                    HitBox hitB = hit.transform.gameObject.GetComponent<HitBox>();
-                    hitB.plyHealth.CmdRemoveHealth(hitB.HitDmg());
-
-                    print($"TRAFILES W {hitB.name}");
-
-                    if (hitB.HighLight)
+                    if (hit.transform.gameObject.CompareTag("HitBox") && hit.transform.gameObject.GetComponent<HitBox>().plyHealth.gameObject == MyPlayer)
                     {
-                        hitB.StartCoroutine("HighLightHit");
+                        FiltredHits.Remove(hit);
+                    }
+                }
+
+                for(int i = 0; i < FiltredHits.Count; i++)
+                {
+                    if (FiltredHits[i].transform.gameObject.CompareTag("HitBox"))
+                    {
+                        HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
+                        hitB.plyHealth.CmdRemoveHealth(hitB.HitDmg());
+                    }
+                    else
+                    {
+                        if (FiltredHits[i].transform.gameObject.layer != LayerMask.NameToLayer("Player"))
+                        {
+                            RpcCreateBulletHole(FiltredHits[i].point, Quaternion.FromToRotation(Vector3.up, FiltredHits[i].normal));
+                        }
                     }
                 }
             }
+
             NextTime = ShootRate;
         }
     }
 
     [ClientRpc]
-    public void RpcChangeMat(GameObject gb)
+    public void RpcCreateBulletHole(Vector3 pos, Quaternion rot)
     {
-        gb.GetComponent<MeshRenderer>().material = Mat;
-    }
-
-    [TargetRpc]
-    public void TargetRpcRecoil(NetworkConnection conn, Vector3 amount)
-    {
-        pml.rotationY += amount.y;
+        GameObject bh = Instantiate(BulletHit, pos, rot);
+        bh.transform.position += bh.transform.up * 0.005f;
+        Destroy(bh, 10);
     }
 }
