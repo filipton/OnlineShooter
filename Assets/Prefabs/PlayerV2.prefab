@@ -4661,12 +4661,14 @@ GameObject:
   - component: {fileID: 5705730203269005244}
   - component: {fileID: 4658366328344393669}
   - component: {fileID: 4658366328344393670}
-  - component: {fileID: 4658366328344393671}
   - component: {fileID: 4658366328344393688}
-  - component: {fileID: 4658366328344393689}
+  - component: {fileID: 4656305083941523696}
   - component: {fileID: 4389742073961597804}
+  - component: {fileID: 4658366328344393671}
+  - component: {fileID: 4658366328344393689}
   - component: {fileID: 3527852265498802770}
   - component: {fileID: 148914891978671231}
+  - component: {fileID: 5157207254871818817}
   - component: {fileID: 4658366328344393690}
   m_Layer: 9
   m_Name: PlayerV2
@@ -4858,6 +4860,60 @@ MonoBehaviour:
   WhatIsGround:
     serializedVersion: 2
     m_Bits: 1
+--- !u!114 &4658366328344393688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4658366328344393691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb3bbb2b3685e914f989e3cb78df51bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  Interval: 0
+  Nid: {fileID: 0}
+  cam: {fileID: 2153106622755483276}
+  MovementThresholdXZ: 0.400002
+  MovementThresholdY: 0.55
+  MaxXZ: 0
+  MaxY: 0
+--- !u!114 &4656305083941523696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4658366328344393691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4b776fabe2ad3479042d800b5f2391, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+--- !u!114 &4389742073961597804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4658366328344393691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9e9a25ce5fd0664cbee7b92f567998c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  audioSource: {fileID: 4658366328344393669}
+  Clips:
+  - {fileID: 8300000, guid: 27744f8005682cd4c88d867b3b4ce0fd, type: 3}
+  - {fileID: 8300000, guid: f4222d315f57d5b41af75958e00e9c74, type: 3}
+  - {fileID: 8300000, guid: 99f669bc5f443684eab1db38e7c35ccd, type: 3}
 --- !u!114 &4658366328344393671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4896,27 +4952,6 @@ MonoBehaviour:
   PH: {fileID: 4658366328344393689}
   As: {fileID: 4389742073961597804}
   ammo: {fileID: 148914891978671231}
---- !u!114 &4658366328344393688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4658366328344393691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb3bbb2b3685e914f989e3cb78df51bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  Interval: 0
-  Nid: {fileID: 0}
-  cam: {fileID: 2153106622755483276}
-  MovementThresholdXZ: 0.400002
-  MovementThresholdY: 0.55
-  MaxXZ: 0
-  MaxY: 0
 --- !u!114 &4658366328344393689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4936,25 +4971,6 @@ MonoBehaviour:
   KSphere: {fileID: 1447860902522100677, guid: bd879165e08b8d84ab99a5bbf0b786f8, type: 3}
   Capsule: {fileID: 4775135418545315229}
   Container: {fileID: 2153106622735743285}
---- !u!114 &4389742073961597804
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4658366328344393691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9e9a25ce5fd0664cbee7b92f567998c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  audioSource: {fileID: 4658366328344393669}
-  Clips:
-  - {fileID: 8300000, guid: 27744f8005682cd4c88d867b3b4ce0fd, type: 3}
-  - {fileID: 8300000, guid: f4222d315f57d5b41af75958e00e9c74, type: 3}
-  - {fileID: 8300000, guid: 99f669bc5f443684eab1db38e7c35ccd, type: 3}
 --- !u!114 &3527852265498802770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4990,6 +5006,23 @@ MonoBehaviour:
   MaxInPlayer: 100
   InMagazine: 30
   InPlayer: 100
+--- !u!114 &5157207254871818817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4658366328344393691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 241340f5509d1b3488472a896bf57034, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  Nick: 
+  Kills: 0
+  Deaths: 0
 --- !u!114 &4658366328344393690
 MonoBehaviour:
   m_ObjectHideFlags: 0
