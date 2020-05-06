@@ -52,7 +52,6 @@ public class PlayerHealth : NetworkBehaviour
 
             if(healthText.text != Health.ToString())
             {
-                GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSync>().clip("death-sound"));
                 healthText.text = Health.ToString();
             }
         }

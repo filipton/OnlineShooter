@@ -26,6 +26,7 @@ public class OnlineShooting : NetworkBehaviour
     public PlayerMouseLook pml;
     public PlayerHealth PH;
     public AudioSync As;
+    public AmmoController ammo;
 
     float LerpTime = -1;
     float RememberY = 0;
@@ -49,9 +50,9 @@ public class OnlineShooting : NetworkBehaviour
                 LerpTime = -1;
                 RememberY = pml.rotationY;
             }
-            if(Input.GetKey(KeyCode.Mouse0) && NextTimeP <= 0)
+            if(Input.GetKey(KeyCode.Mouse0) && NextTimeP <= 0 && ammo.InMagazine > 0)
             {
-                CmdShoot(cam.transform.position, cam.transform.forward, gameObject);
+                CmdShoot(gameObject);
                 As.CmdSyncAudioClip("AkShot");
                 NextTimeP = ShootRate;
                 pml.rotationY += 1.5f;
@@ -91,10 +92,10 @@ public class OnlineShooting : NetworkBehaviour
     }
 
     [Command]
-    public void CmdShoot(Vector3 pos, Vector3 origin, GameObject MyPlayer)
+    public void CmdShoot(GameObject MyPlayer)
     {
         //pos += origin * 0.4f;
-        if(NextTime <= 0)
+        if(NextTime <= 0 && ammo.InMagazine > 0)
         {
             //RaycastHit[] hits = Physics.RaycastAll(pos, origin);
             RaycastHit[] hits = RaycastAllSort(cam.transform.position, cam.transform.forward);
@@ -104,7 +105,7 @@ public class OnlineShooting : NetworkBehaviour
             {
                 foreach(RaycastHit hit in hits)
                 {
-                    if (hit.transform.gameObject.CompareTag("HitBox") && hit.transform.gameObject.GetComponent<HitBox>().plyHealth.gameObject == MyPlayer)
+                    if (hit.transform.gameObject.CompareTag("HitBox") && hit.transform.gameObject.GetComponent<HitBox>().plyHealth.gameObject == gameObject)
                     {
                         FiltredHits.Remove(hit);
                     }
@@ -122,6 +123,10 @@ public class OnlineShooting : NetworkBehaviour
                             {
                                 HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
                                 hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact));
+                                if(hitB.plyHealth.Health > 0)
+                                {
+                                    As.RpcSyncAudioClip("death-sound");
+                                }
                             }
                         }
                         else
@@ -170,6 +175,7 @@ public class OnlineShooting : NetworkBehaviour
                 }
             }
 
+            ammo.InMagazine -= 1;
             NextTime = ShootRate - 0.1f;
         }
     }

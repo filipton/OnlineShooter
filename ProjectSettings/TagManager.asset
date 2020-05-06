@@ -9,6 +9,7 @@ TagManager:
   - HitBox
   - HealthText
   - RespawnButton
+  - AmmoText
   layers:
   - Default
   - TransparentFX
