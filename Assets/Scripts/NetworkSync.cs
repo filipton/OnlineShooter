@@ -12,8 +12,8 @@ public class NetworkSync : NetworkBehaviour
     public NetworkIdentity Nid;
     public Camera cam;
 
-    public float MovementTroubleshootXZ = 0.400002f;
-    public float MovementTroubleshootY = 0.55f;
+    public float MovementThresholdXZ = 0.400002f;
+    public float MovementThresholdY = 0.55f;
     public float MaxXZ;
     public float MaxY;
 
@@ -50,7 +50,7 @@ public class NetworkSync : NetworkBehaviour
                 MaxY = ydistspeed;
             }
 
-            if (xzdistspeed > MovementTroubleshootXZ || ydistspeed > MovementTroubleshootY)
+            if (xzdistspeed > MovementThresholdXZ || ydistspeed > MovementThresholdY)
             {
                 pos = old_position;
                 TargetRpcMoveBackPlayer(this.GetComponent<NetworkIdentity>().connectionToClient, pos);

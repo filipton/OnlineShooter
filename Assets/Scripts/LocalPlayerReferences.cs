@@ -1,18 +1,21 @@
-﻿using System.Collections;
+﻿using Mirror;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
-public class LocalPlayerReferences : MonoBehaviour
+public class LocalPlayerReferences : NetworkBehaviour
 {
-    // Start is called before the first frame update
+    public List<Behaviour> components = new List<Behaviour>();
+
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (!isLocalPlayer)
+        {
+            foreach(Behaviour beh in components)
+            {
+                beh.enabled = false;
+            }
+        }
     }
 }

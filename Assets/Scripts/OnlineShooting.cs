@@ -14,15 +14,18 @@ public class OnlineShooting : NetworkBehaviour
     [SyncVar]
     public float ShootRate = 0.1f;
 
+    float DamagePlayerScanThreshold = 0.2f;
+    float CreateBulletScanThreshold = 0.1f;
+
     public LayerMask HitBoxLayer;
     public HitBox[] HitBoxes;
 
     public GameObject BulletHit;
 
-    public Material Mat;
     public Camera cam;
     public PlayerMouseLook pml;
     public PlayerHealth PH;
+    public AudioSync As;
 
     float LerpTime = -1;
     float RememberY = 0;
@@ -49,6 +52,7 @@ public class OnlineShooting : NetworkBehaviour
             if(Input.GetKey(KeyCode.Mouse0) && NextTimeP <= 0)
             {
                 CmdShoot(cam.transform.position, cam.transform.forward, gameObject);
+                As.CmdSyncAudioClip("AkShot");
                 NextTimeP = ShootRate;
                 pml.rotationY += 1.5f;
             }
@@ -93,7 +97,7 @@ public class OnlineShooting : NetworkBehaviour
         if(NextTime <= 0)
         {
             //RaycastHit[] hits = Physics.RaycastAll(pos, origin);
-            RaycastHit[] hits = Physics.RaycastAll(cam.transform.position, cam.transform.forward);
+            RaycastHit[] hits = RaycastAllSort(cam.transform.position, cam.transform.forward);
             List<RaycastHit> FiltredHits = hits.ToList();
 
             if(hits.Length > 0)
@@ -106,18 +110,61 @@ public class OnlineShooting : NetworkBehaviour
                     }
                 }
 
-                for(int i = 0; i < FiltredHits.Count; i++)
+                float BulletInpact = 1;
+
+                for (int i = 0; i < FiltredHits.Count; i++)
                 {
-                    if (FiltredHits[i].transform.gameObject.CompareTag("HitBox"))
+                    if(BulletInpact > 0)
                     {
-                        HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
-                        hitB.plyHealth.CmdRemoveHealth(hitB.HitDmg());
-                    }
-                    else
-                    {
-                        if (FiltredHits[i].transform.gameObject.layer != LayerMask.NameToLayer("Player"))
+                        if (FiltredHits[i].transform.gameObject.CompareTag("HitBox"))
                         {
-                            RpcCreateBulletHole(FiltredHits[i].point, Quaternion.FromToRotation(Vector3.up, FiltredHits[i].normal));
+                            if (BulletInpact >= DamagePlayerScanThreshold)
+                            {
+                                HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
+                                hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact));
+                            }
+                        }
+                        else
+                        {
+                            if (FiltredHits[i].transform.gameObject.layer != LayerMask.NameToLayer("Player") && BulletInpact >= CreateBulletScanThreshold)
+                            {
+                                RpcCreateBulletHole(FiltredHits[i].point, Quaternion.FromToRotation(Vector3.up, FiltredHits[i].normal));
+                            }
+                        }
+
+                        //scan calculator
+                        ScanableObject so = FiltredHits[i].transform.GetComponent<ScanableObject>();
+                        if (so == null)
+                        {
+                            BulletInpact *= 1;
+                        }
+                        else
+                        {
+                            BulletInpact *= so.Scanable ? so.ScanMultiplier : 0;
+                        }
+
+                        MeshRenderer pbm = FiltredHits[i].transform.GetComponent<MeshRenderer>();
+                        if (pbm != null)
+                        {
+                            Vector3 hitNormal = FiltredHits[i].normal;
+
+                            //side "X"
+                            if (hitNormal.x != 0)
+                            {
+                                BulletInpact /= pbm.bounds.size.x * 2;
+                            }
+
+                            //side "Y"
+                            if (hitNormal.y != 0)
+                            {
+                                BulletInpact /= pbm.bounds.size.y * 2;
+                            }
+
+                            //side "Z"
+                            if (hitNormal.z != 0)
+                            {
+                                BulletInpact /= pbm.bounds.size.z * 2;
+                            }
                         }
                     }
                 }
@@ -127,11 +174,17 @@ public class OnlineShooting : NetworkBehaviour
         }
     }
 
+    RaycastHit[] RaycastAllSort(Vector3 position, Vector3 origin)
+    {
+        return Physics.RaycastAll(position, origin).OrderBy(h => h.distance).ToArray();
+    }
+
     [ClientRpc]
     public void RpcCreateBulletHole(Vector3 pos, Quaternion rot)
     {
         GameObject bh = Instantiate(BulletHit, pos, rot);
         bh.transform.position += bh.transform.up * 0.005f;
+        bh.transform.rotation *= Quaternion.AngleAxis(Random.Range(0, 360), Vector3.up);
         Destroy(bh, 10);
     }
 }
