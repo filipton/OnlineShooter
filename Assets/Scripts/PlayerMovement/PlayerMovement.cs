@@ -8,9 +8,8 @@ public class PlayerMovement : NetworkBehaviour
 {
     CharacterController characterController;
     public GameObject GroundCheck;
-    public GameObject ToDisable;
 
-    public GameObject FirstPersonWeapon;
+    public Animator CharacterAnimator;
 
     public float speed = 7f;
     public float jumpHeight = 1.5f;
@@ -32,8 +31,6 @@ public class PlayerMovement : NetworkBehaviour
         else
         {
             characterController = GetComponent<CharacterController>();
-            ToDisable.SetActive(false);
-            FirstPersonWeapon.SetActive(true);
         }
     }
 
@@ -48,6 +45,25 @@ public class PlayerMovement : NetworkBehaviour
 
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
+
+        if (isGrounded)
+        {
+            if(z > 0)
+            {
+                CharacterAnimator.SetBool("WalkingBackwards", false);
+                CharacterAnimator.SetBool("Walking", true);
+            }
+            else if (z < 0)
+            {
+                CharacterAnimator.SetBool("Walking", false);
+                CharacterAnimator.SetBool("WalkingBackwards", true);
+            }
+            else
+            {
+                CharacterAnimator.SetBool("Walking", false);
+                CharacterAnimator.SetBool("WalkingBackwards", false);
+            }
+        }
 
         Vector3 move = transform.right * x + transform.forward * z;
 

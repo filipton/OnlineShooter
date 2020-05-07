@@ -4852,8 +4852,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   GroundCheck: {fileID: 2153106621860858193}
-  ToDisable: {fileID: 4775135418545315229}
-  FirstPersonWeapon: {fileID: 4775135420451806983}
+  CharacterAnimator: {fileID: 0}
   speed: 7
   jumpHeight: 1.5
   gravity: -29.43

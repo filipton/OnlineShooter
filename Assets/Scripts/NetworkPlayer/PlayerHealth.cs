@@ -73,7 +73,7 @@ public class PlayerHealth : NetworkBehaviour
         {
             GetComponent<OnlineShooting>().HitBoxes.ToList().ForEach(delegate (HitBox hb)
             {
-                hb.GetComponent<Collider>().enabled = false;
+                hb.GetComponent<MeshCollider>().enabled = false;
             });
             Health = 0;
             PlayerKilled = true;
@@ -90,7 +90,7 @@ public class PlayerHealth : NetworkBehaviour
             Health = 100;
             GetComponent<OnlineShooting>().HitBoxes.ToList().ForEach(delegate (HitBox hb)
             {
-                hb.GetComponent<Collider>().enabled = true;
+                hb.GetComponent<MeshCollider>().enabled = true;
             });
             RpcRespawnPlayer();
         }

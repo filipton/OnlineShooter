@@ -25,7 +25,7 @@ public class BuildGame : MonoBehaviour
         buildPlayerOptions.options = BuildOptions.None;
         BuildPipeline.BuildPlayer(buildPlayerOptions);
 
-
+        print("BUILDED!");
     }
     [MenuItem("Build/Build Linux Server")]
     public static void BuildLinuxServer()

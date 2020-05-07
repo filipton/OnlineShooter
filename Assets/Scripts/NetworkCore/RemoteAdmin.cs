@@ -24,7 +24,6 @@ public class RemoteAdmin : NetworkBehaviour
     public void CmdSendCmd(string cmd, string Nick, string parms)
     {
         string ret = "Unknown command!";
-        GetAllPlayers();
         PlayersIdentities.TryGetValue(Nick, out NetworkIdentity id);
 
         switch (cmd)
