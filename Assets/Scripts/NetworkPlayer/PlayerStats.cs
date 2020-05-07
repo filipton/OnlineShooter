@@ -17,7 +17,7 @@ public class PlayerStats : NetworkBehaviour
 
     private void Start()
     {
-        
+        CmdSetNick(FindObjectOfType<CustomNetworkManager>().LocalNick);
     }
 
     [ServerCallback]
@@ -34,7 +34,7 @@ public class PlayerStats : NetworkBehaviour
         {
             if (nick.Length < 1)
             {
-                nick = "NIENAZWANY GRACZZ!";
+                nick = $"NIENAZWANY GRACZZ! {GetComponent<NetworkIdentity>().netId}";
             }
 
             Nick = nick;

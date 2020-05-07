@@ -7,6 +7,8 @@ using UnityEngine;
 public class LocalPlayerReferences : NetworkBehaviour
 {
     public List<Behaviour> components = new List<Behaviour>();
+    public GameObject PlayerModel;
+    public GameObject PlayerFPC_Ak;
 
     void Start()
     {
@@ -16,6 +18,11 @@ public class LocalPlayerReferences : NetworkBehaviour
             {
                 beh.enabled = false;
             }
+        }
+        else
+        {
+            PlayerModel.SetActive(false);
+            PlayerFPC_Ak.SetActive(true);
         }
     }
 }

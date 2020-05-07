@@ -17,6 +17,8 @@ public class AmmoController : NetworkBehaviour
     [SyncVar]
     public int InPlayer = 100;
 
+    public GameObject AmmoBoxPrefab;
+
     private void Update()
     {
         if (isLocalPlayer)
@@ -35,9 +37,32 @@ public class AmmoController : NetworkBehaviour
     {
         if(InPlayer > 0)
         {
+            if (InMagazine > 0)
+            {
+                RpcSpawnAmmoBox(transform.position + transform.up, InMagazine);
+
+                //spawn in server
+                if (isServerOnly)
+                {
+                    GameObject gb = Instantiate(AmmoBoxPrefab);
+                    AmmoBoxPrefab.transform.position = transform.position + transform.up;
+                    gb.GetComponent<AmmoBox>().InMagazine = InMagazine;
+                    Destroy(gb, 60);
+                }
+            }
+
             int min = InPlayer < MaxInMagazine ? InPlayer : MaxInMagazine;
             InPlayer -= min;
             InMagazine = min;
         }
+    }
+
+    [ClientRpc]
+    public void RpcSpawnAmmoBox(Vector3 position, int inM)
+    {
+        GameObject gb = Instantiate(AmmoBoxPrefab);
+        AmmoBoxPrefab.transform.position = position;
+        gb.GetComponent<AmmoBox>().InMagazine = inM;
+        Destroy(gb, 60);
     }
 }

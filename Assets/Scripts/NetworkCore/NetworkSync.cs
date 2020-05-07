@@ -24,13 +24,12 @@ public class NetworkSync : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            Nid = GetComponent<NetworkIdentity>();
             StartCoroutine(SyncMovement());
         }
     }
 
     [Command]
-    public void CmdMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot, NetworkIdentity nid)
+    public void CmdMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot)
     {
         if (old_position == null)
         {
@@ -53,12 +52,12 @@ public class NetworkSync : NetworkBehaviour
             if (xzdistspeed > MovementThresholdXZ || ydistspeed > MovementThresholdY)
             {
                 pos = old_position;
-                TargetRpcMoveBackPlayer(this.GetComponent<NetworkIdentity>().connectionToClient, pos);
+                TargetRpcMoveBackPlayer(Nid.connectionToClient, pos);
             }
             old_position = pos;
         }
 
-        RpcMovePlayer(pos, rot, camRot, nid);
+        RpcMovePlayer(pos, rot, camRot, Nid);
         transform.position = pos;
         transform.rotation = rot;
         cam.transform.rotation = camRot;
@@ -90,7 +89,7 @@ public class NetworkSync : NetworkBehaviour
     {
         while (true)
         {
-            CmdMovePlayer(transform.position, transform.rotation, cam.transform.rotation, Nid);
+            CmdMovePlayer(transform.position, transform.rotation, cam.transform.rotation);
             yield return new WaitForSeconds(Interval);
         }
     }
