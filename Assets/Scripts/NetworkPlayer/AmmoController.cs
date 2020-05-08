@@ -28,6 +28,11 @@ public class AmmoController : NetworkBehaviour
                 CmdReload();
             }
 
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                CmdPickupAmmoBox();
+            }
+
             LocalSceneObjects.singleton.AmmoText.text = $"<color={(InMagazine < 6 ? "red" : "#51FF00")}>{InMagazine}</color> <color=#FF3F00>/</color> <color={(InPlayer < MaxInMagazine ? "red" : "#51FF00")}>{InPlayer}</color>";
         }
     }
@@ -63,6 +68,21 @@ public class AmmoController : NetworkBehaviour
         GameObject gb = Instantiate(AmmoBoxPrefab);
         AmmoBoxPrefab.transform.position = position;
         gb.GetComponent<AmmoBox>().InMagazine = inM;
+        gb.GetComponent<AmmoBox>().C = this;
         Destroy(gb, 60);
+    }
+
+    [Command]
+    public void CmdPickupAmmoBox()
+    {
+        foreach(AmmoBox ab in FindObjectsOfType<AmmoBox>())
+        {
+            if((this.transform.position - ab.transform.position).magnitude < 3f)
+            {
+                InPlayer += ab.InMagazine;
+                Destroy(ab.gameObject);
+                break;
+            }
+        }
     }
 }
