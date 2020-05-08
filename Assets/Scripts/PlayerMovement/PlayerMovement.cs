@@ -9,7 +9,7 @@ public class PlayerMovement : NetworkBehaviour
     CharacterController characterController;
     public GameObject GroundCheck;
 
-    public Animator CharacterAnimator;
+    public AnimationSync animationSync;
 
     public float speed = 7f;
     public float jumpHeight = 1.5f;
@@ -50,18 +50,18 @@ public class PlayerMovement : NetworkBehaviour
         {
             if(z > 0)
             {
-                CharacterAnimator.SetBool("WalkingBackwards", false);
-                CharacterAnimator.SetBool("Walking", true);
+                animationSync.CmdSetAnimatorBool("WalkingBackwards", false);
+                animationSync.CmdSetAnimatorBool("Walking", true);
             }
             else if (z < 0)
             {
-                CharacterAnimator.SetBool("Walking", false);
-                CharacterAnimator.SetBool("WalkingBackwards", true);
+                animationSync.CmdSetAnimatorBool("Walking", false);
+                animationSync.CmdSetAnimatorBool("WalkingBackwards", true);
             }
             else
             {
-                CharacterAnimator.SetBool("Walking", false);
-                CharacterAnimator.SetBool("WalkingBackwards", false);
+                animationSync.CmdSetAnimatorBool("Walking", false);
+                animationSync.CmdSetAnimatorBool("WalkingBackwards", false);
             }
         }
 

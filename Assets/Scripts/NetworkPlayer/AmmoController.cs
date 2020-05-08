@@ -28,11 +28,6 @@ public class AmmoController : NetworkBehaviour
                 CmdReload();
             }
 
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                CmdPickupAmmoBox();
-            }
-
             LocalSceneObjects.singleton.AmmoText.text = $"<color={(InMagazine < 6 ? "red" : "#51FF00")}>{InMagazine}</color> <color=#FF3F00>/</color> <color={(InPlayer < MaxInMagazine ? "red" : "#51FF00")}>{InPlayer}</color>";
         }
     }

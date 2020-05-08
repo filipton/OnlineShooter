@@ -10,7 +10,7 @@ public class AmmoBox : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             C.CmdPickupAmmoBox();
         }

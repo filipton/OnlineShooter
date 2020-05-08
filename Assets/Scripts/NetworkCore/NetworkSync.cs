@@ -19,17 +19,17 @@ public class NetworkSync : NetworkBehaviour
 
     Vector3 old_position;
 
-    // Start is called before the first frame update
     void Start()
     {
         if (isLocalPlayer)
         {
+            Nid = GetComponent<NetworkIdentity>();
             StartCoroutine(SyncMovement());
         }
     }
 
     [Command]
-    public void CmdMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot)
+    public void CmdMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot, NetworkIdentity nid)
     {
         if (old_position == null)
         {
@@ -40,7 +40,7 @@ public class NetworkSync : NetworkBehaviour
             float xzdistspeed = (new Vector2(pos.x, pos.z) - new Vector2(old_position.x, old_position.z)).magnitude;
             float ydistspeed = Mathf.Abs(pos.y - old_position.y);
 
-            if(xzdistspeed > MaxXZ)
+            if (xzdistspeed > MaxXZ)
             {
                 MaxXZ = xzdistspeed;
             }
@@ -52,12 +52,12 @@ public class NetworkSync : NetworkBehaviour
             if (xzdistspeed > MovementThresholdXZ || ydistspeed > MovementThresholdY)
             {
                 pos = old_position;
-                TargetRpcMoveBackPlayer(Nid.connectionToClient, pos);
+                TargetRpcMoveBackPlayer(this.GetComponent<NetworkIdentity>().connectionToClient, pos);
             }
             old_position = pos;
         }
 
-        RpcMovePlayer(pos, rot, camRot, Nid);
+        RpcMovePlayer(pos, rot, camRot, nid);
         transform.position = pos;
         transform.rotation = rot;
         cam.transform.rotation = camRot;
@@ -89,7 +89,7 @@ public class NetworkSync : NetworkBehaviour
     {
         while (true)
         {
-            CmdMovePlayer(transform.position, transform.rotation, cam.transform.rotation);
+            CmdMovePlayer(transform.position, transform.rotation, cam.transform.rotation, Nid);
             yield return new WaitForSeconds(Interval);
         }
     }

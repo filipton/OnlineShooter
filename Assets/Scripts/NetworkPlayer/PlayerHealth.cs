@@ -21,17 +21,7 @@ public class PlayerHealth : NetworkBehaviour
     public GameObject Container;
 
     TextMeshProUGUI healthText;
-    Button respawnButton;
 
-    private void Start()
-    {
-        if(isLocalPlayer)
-        {
-            respawnButton = GameObject.FindGameObjectWithTag("RespawnButton").GetComponent<Button>();
-            respawnButton.onClick.AddListener(OnRespawnButtonClick);
-            respawnButton.gameObject.SetActive(false);
-        }
-    }
 
     private void Update()
     {
@@ -54,15 +44,19 @@ public class PlayerHealth : NetworkBehaviour
             {
                 healthText.text = Health.ToString();
             }
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                RespawnButtonClick();
+            }
         }
     }
 
-    public void OnRespawnButtonClick()
+    public void RespawnButtonClick()
     {
         CmdRespawnPlayer();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        respawnButton.gameObject.SetActive(false);
     }
 
     public void CmdRemoveHealth(int amount)
@@ -113,7 +107,6 @@ public class PlayerHealth : NetworkBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            respawnButton.gameObject.SetActive(true);
 
             GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSync>().clip("real-death-sound"));
         }
@@ -125,6 +118,9 @@ public class PlayerHealth : NetworkBehaviour
         if (isLocalPlayer)
         {
             GetComponent<PlayerMovement>().enabled = true;
+            PlayerList pl = GetComponent<PlayerList>();
+            pl.CurrentPlayer = pl.players.FindIndex(x => x.Name == GetComponent<PlayerStats>().Nick);
+            pl.UpdateCam();
         }
         else
         {

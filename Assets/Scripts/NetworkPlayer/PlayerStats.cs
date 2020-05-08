@@ -17,7 +17,8 @@ public class PlayerStats : NetworkBehaviour
 
     private void Start()
     {
-        CmdSetNick(FindObjectOfType<CustomNetworkManager>().LocalNick);
+        if(isLocalPlayer)
+            CmdSetNick(FindObjectOfType<CustomNetworkManager>().LocalNick);
     }
 
     [ServerCallback]

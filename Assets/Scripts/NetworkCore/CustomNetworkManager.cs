@@ -12,4 +12,14 @@ public class CustomNetworkManager : NetworkManager
     {
         LocalNick = tmp_if.text;
     }
+
+    public override void OnServerConnect(NetworkConnection conn)
+    {
+        base.OnServerConnect(conn);
+
+        foreach(PlayerList pl in FindObjectsOfType<PlayerList>())
+        {
+            pl.RpcGetAllPlayers();
+        }
+    }
 }
