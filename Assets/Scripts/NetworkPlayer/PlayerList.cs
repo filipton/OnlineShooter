@@ -75,7 +75,13 @@ public class PlayerList : NetworkBehaviour
 
                 foreach (NetworkIdentity nid in FindObjectsOfType<NetworkIdentity>())
                 {
-                    players.Add(new Player(nid.GetComponent<PlayerStats>().Nick, nid.GetComponent<PlayerList>()));
+                    PlayerStats ps = nid.GetComponent<PlayerStats>();
+                    PlayerList pl = nid.GetComponent<PlayerList>();
+
+                    if (ps != null && pl != null)
+                    {
+                        players.Add(new Player(ps.Nick, pl));
+                    }
                 }
             }
         }

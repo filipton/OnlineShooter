@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerMouseLook : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class PlayerMouseLook : MonoBehaviour
     float minimumY = -90F;
     float maximumY = 90F;
 
+    bool Esc;
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -28,21 +31,38 @@ public class PlayerMouseLook : MonoBehaviour
 
     void Update()
     {
-        float AxisX = Input.GetAxis("Mouse X") * sensitivityX;
-        float AxisY = Input.GetAxis("Mouse Y") * sensitivityY;
+        if (!Esc)
+        {
+            float AxisX = Input.GetAxis("Mouse X") * sensitivityX;
+            float AxisY = Input.GetAxis("Mouse Y") * sensitivityY;
 
-        CanRotateYAxis = AxisY != 0 ? false : true;
+            CanRotateYAxis = AxisY != 0 ? false : true;
 
-        rotationX += AxisX;
-        rotationY += AxisY;
-        rotationX = ClampAngle(rotationX, minimumX, maximumX);
-        rotationY = ClampAngle(rotationY, minimumY, maximumY);
-        Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
-        Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, -Vector3.right);
+            rotationX += AxisX;
+            rotationY += AxisY;
+            rotationX = ClampAngle(rotationX, minimumX, maximumX);
+            rotationY = ClampAngle(rotationY, minimumY, maximumY);
+            Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
+            Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, -Vector3.right);
 
-        transform.localRotation = yQuaternion;
-        playerBody.localRotation = xQuaternion;
+            transform.localRotation = yQuaternion;
+            playerBody.localRotation = xQuaternion;
+        }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Esc = !Esc;
+            if (Esc)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
     }
     public static float ClampAngle(float angle, float min, float max)
     {
