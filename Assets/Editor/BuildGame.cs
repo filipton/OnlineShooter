@@ -4,6 +4,7 @@ using UnityEditor;
 using System.IO;
 using System.Text;
 using System.IO.Compression;
+using System.Diagnostics;
 
 public class BuildGame : MonoBehaviour
 {
@@ -25,7 +26,9 @@ public class BuildGame : MonoBehaviour
         buildPlayerOptions.options = BuildOptions.None;
         BuildPipeline.BuildPlayer(buildPlayerOptions);
 
-        print("BUILDED!");
+        print("BUILDED, TARGET: WINDOWS");
+
+        Process.Start(Path.Combine(BuildsPatch, "ServerDeployer.exe"), "win");
     }
     [MenuItem("Build/Build Linux Server")]
     public static void BuildLinuxServer()
@@ -36,6 +39,10 @@ public class BuildGame : MonoBehaviour
         buildPlayerOptions2.target = BuildTarget.StandaloneLinux64;
         buildPlayerOptions2.options = BuildOptions.EnableHeadlessMode;
         BuildPipeline.BuildPlayer(buildPlayerOptions2);
+
+        print("BUILDED, TARGET: LINUX");
+
+        Process.Start(Path.Combine(BuildsPatch, "ServerDeployer.exe"), "linux");
     }
 
     public static string[] AllActiveScenes()
@@ -48,4 +55,6 @@ public class BuildGame : MonoBehaviour
         }
         return scenes.ToArray();
     }
+
+    public static string BuildsPatch => Application.dataPath.Replace("/Assets", "/Builds");
 }

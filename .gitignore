@@ -3,7 +3,10 @@
 ###
 [Aa]ssets/AssetStoreTools*
 [Bb]uild/
-[Bb]uilds/
+[Bb]uilds/LinuxBuild
+[Bb]uilds/WindowsBuild
+[Bb]uilds/LinuxBuild.zip
+[Bb]uilds/WindowsBuild.zip
 [Ll]ibrary/
 [Ll]ocal[Cc]ache/
 [Oo]bj/
