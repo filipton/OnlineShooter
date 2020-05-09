@@ -40,6 +40,11 @@ public class ServerList : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(DiscordRpcController.singleton != null)
+        {
+            DiscordRpcController.singleton.ChangeDiscordStatus("Wyszedl dzban z serwera XD", "W Menu", "game_pic");
+        }
+
         CNM = FindObjectOfType<CustomNetworkManager>();
 
         Cursor.lockState = CursorLockMode.None;
