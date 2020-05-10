@@ -29,6 +29,7 @@ public class CustomNetworkManager : NetworkManager
 
     public void ConnectToServerFromList(ServerInfo sinfo)
     {
+        GetComponent<DiscordRpcController>().CurrentServer = sinfo;
         networkAddress = sinfo.Ip;
         Transport.port = (ushort)sinfo.Port;
         StartClient();

@@ -19,6 +19,6 @@ public class LocalSceneObjects : MonoBehaviour
 
     private void Start()
     {
-        DiscordRpcController.singleton.ChangeDiscordStatus($"IP: {NetworkManager.singleton.networkAddress}", "Gra na serwerze", "game_pic");
+        DiscordRpcController.singleton.ChangeDiscordStatus($"Server: {DiscordRpcController.singleton.CurrentServer.ServerName}", "Gra na serwerze", "game_pic");
     }
 }
