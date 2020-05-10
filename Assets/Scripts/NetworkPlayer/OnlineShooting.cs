@@ -52,7 +52,7 @@ public class OnlineShooting : NetworkBehaviour
             }
             if(Input.GetKey(KeyCode.Mouse0) && NextTimeP <= 0 && ammo.InMagazine > 0)
             {
-                CmdShoot(gameObject);
+                CmdShoot();
                 As.CmdSyncAudioClip("AkShot");
                 NextTimeP = ShootRate;
                 pml.rotationY += 1.5f;
@@ -92,7 +92,7 @@ public class OnlineShooting : NetworkBehaviour
     }
 
     [Command]
-    public void CmdShoot(GameObject MyPlayer)
+    public void CmdShoot()
     {
         //pos += origin * 0.4f;
         if(NextTime <= 0 && ammo.InMagazine > 0)
@@ -122,7 +122,7 @@ public class OnlineShooting : NetworkBehaviour
                             if (BulletInpact >= DamagePlayerScanThreshold)
                             {
                                 HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
-                                hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact));
+                                hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact), GetComponent<PlayerStats>());
                                 if(hitB.plyHealth.Health > 0)
                                 {
                                     As.RpcSyncAudioClip("death-sound");

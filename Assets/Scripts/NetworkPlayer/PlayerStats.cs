@@ -3,6 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Team
+{
+    WithoutTeam = 0,
+    Team1 = 1,
+    Team2 = 2
+}
+
 public class PlayerStats : NetworkBehaviour
 {
     [SyncVar]
@@ -15,10 +22,17 @@ public class PlayerStats : NetworkBehaviour
     //[SyncVar]
     //public int Assists;
 
+    [SyncVar]
+    public Team PlayerTeam;
+
     private void Start()
     {
-        if(isLocalPlayer)
-            CmdSetNick(FindObjectOfType<CustomNetworkManager>().LocalNick);
+        if (isLocalPlayer)
+        {
+            CustomNetworkManager cnm = FindObjectOfType<CustomNetworkManager>();
+            CmdSetNick(cnm.LocalNick);
+            CmdChooseTeam(cnm.LocalTeam == Team.WithoutTeam ? Team.Team1 : cnm.LocalTeam);
+        }
     }
 
     [ServerCallback]
@@ -40,5 +54,11 @@ public class PlayerStats : NetworkBehaviour
 
             Nick = nick;
         }
+    }
+
+    [Command]
+    public void CmdChooseTeam(Team team)
+    {
+        PlayerTeam = team;
     }
 }

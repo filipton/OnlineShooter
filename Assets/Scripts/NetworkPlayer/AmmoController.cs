@@ -39,16 +39,9 @@ public class AmmoController : NetworkBehaviour
         {
             if (InMagazine > 0)
             {
-                RpcSpawnAmmoBox(transform.position + transform.up, InMagazine);
-
-                //spawn in server
-                if (isServerOnly)
-                {
-                    GameObject gb = Instantiate(AmmoBoxPrefab);
-                    AmmoBoxPrefab.transform.position = transform.position + transform.up;
-                    gb.GetComponent<AmmoBox>().InMagazine = InMagazine;
-                    Destroy(gb, 60);
-                }
+                GameObject gb = Instantiate(AmmoBoxPrefab, transform.position, Quaternion.Euler(0, 0, 0));
+                NetworkServer.Spawn(gb);
+                gb.GetComponent<AmmoBox>().InMagazine = InMagazine;
             }
 
             int min = InPlayer < MaxInMagazine ? InPlayer : MaxInMagazine;
@@ -57,27 +50,14 @@ public class AmmoController : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
-    public void RpcSpawnAmmoBox(Vector3 position, int inM)
-    {
-        GameObject gb = Instantiate(AmmoBoxPrefab);
-        AmmoBoxPrefab.transform.position = position;
-        gb.GetComponent<AmmoBox>().InMagazine = inM;
-        gb.GetComponent<AmmoBox>().C = this;
-        Destroy(gb, 60);
-    }
-
     [Command]
-    public void CmdPickupAmmoBox()
+    public void CmdPickupAmmoBox(GameObject gbAmmoBox)
     {
-        foreach(AmmoBox ab in FindObjectsOfType<AmmoBox>())
+        if((transform.position - gbAmmoBox.transform.position).magnitude < 3f)
         {
-            if((this.transform.position - ab.transform.position).magnitude < 3f)
-            {
-                InPlayer += ab.InMagazine;
-                Destroy(ab.gameObject);
-                break;
-            }
+            InPlayer += gbAmmoBox.GetComponent<AmmoBox>().InMagazine;
+            NetworkServer.UnSpawn(gbAmmoBox);
+            NetworkServer.Destroy(gbAmmoBox);
         }
     }
 }

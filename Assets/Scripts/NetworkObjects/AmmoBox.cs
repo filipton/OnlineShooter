@@ -1,18 +1,25 @@
 ﻿using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class AmmoBox : MonoBehaviour
+public class AmmoBox : NetworkBehaviour
 {
+    [SyncVar]
     public int InMagazine = 30;
     public AmmoController C;
 
+    private void Start()
+    {
+        C = FindObjectsOfType<AmmoController>().ToList().Find(x => x.isLocalPlayer);
+    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && (transform.position - C.transform.position).magnitude < 3f)
         {
-            C.CmdPickupAmmoBox();
+            C.CmdPickupAmmoBox(gameObject);
         }
     }
 }

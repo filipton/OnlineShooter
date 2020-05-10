@@ -9,20 +9,19 @@ public class RemoteAdmin : NetworkBehaviour
 
     private void Start()
     {
-        GetAllPlayers();
+        
     }
 
     private void Update()
     {
-        if (isLocalPlayer)
-        {
-            
-        }
+        
     }
 
     [Command]
     public void CmdSendCmd(string cmd, string Nick, string parms)
     {
+        GetAllPlayers();
+
         string ret = "Unknown command!";
         PlayersIdentities.TryGetValue(Nick, out NetworkIdentity id);
 
@@ -30,7 +29,7 @@ public class RemoteAdmin : NetworkBehaviour
         {
             case "add-ammo":
                 id.GetComponent<AmmoController>().InPlayer += int.Parse(parms);
-                ret = $"Nick: {Nick}, Parms: {parms}";
+                ret = $"Ammo added to: Nick: {Nick}, Amount: {parms}";
                 break;
             case "play-sound":
                 id.GetComponent<AudioSync>().RpcSyncAudioClip(parms);
@@ -38,13 +37,13 @@ public class RemoteAdmin : NetworkBehaviour
                 break;
         }
 
-        TargetRpcCommandReturn(GetComponent<NetworkIdentity>().connectionToClient, cmd);
+        TargetRpcCommandReturn(GetComponent<NetworkIdentity>().connectionToClient, ret);
     }
 
     [TargetRpc]
     public void TargetRpcCommandReturn(NetworkConnection conn, string ret)
     {
-        print(ret);
+        RemoteConsole.singleton.AddLog($"<color=red><b>[SUDO SERVERCALLBACK]</b></color> {ret}");
     }
 
     void GetAllPlayers()
@@ -53,7 +52,10 @@ public class RemoteAdmin : NetworkBehaviour
 
         foreach (NetworkIdentity id in FindObjectsOfType<NetworkIdentity>())
         {
-            PlayersIdentities.Add(id.GetComponent<PlayerStats>().Nick, id);
+            if (id.GetComponent<PlayerStats>() != null)
+            { 
+                PlayersIdentities.Add(id.GetComponent<PlayerStats>().Nick, id); 
+            }
         }
     }
 }

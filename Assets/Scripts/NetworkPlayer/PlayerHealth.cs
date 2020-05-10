@@ -59,7 +59,7 @@ public class PlayerHealth : NetworkBehaviour
         Cursor.visible = false;
     }
 
-    public void CmdRemoveHealth(int amount)
+    public void CmdRemoveHealth(int amount, PlayerStats damagingPlayer)
     {
         Health -= amount;
 
@@ -72,6 +72,8 @@ public class PlayerHealth : NetworkBehaviour
             Health = 0;
             PlayerKilled = true;
             RpcKillPlayer();
+            GetComponent<PlayerStats>().Deaths += 1;
+            damagingPlayer.Kills += 1;
         }
     }
 

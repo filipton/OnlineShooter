@@ -10,6 +10,12 @@ public class LocalSceneObjects : MonoBehaviour
 
     [Header("Scene Objecs")]
     public TextMeshProUGUI AmmoText;
+    
+    [Header("Tab Player Stats")]
+    public GameObject TabPlayerStats;
+    public GameObject Team1;
+    public GameObject Team2;
+    public TextMeshProUGUI RoundsText;
 
 
     private void Awake()

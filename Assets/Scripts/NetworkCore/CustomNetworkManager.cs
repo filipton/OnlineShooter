@@ -8,13 +8,20 @@ using UnityEngine.EventSystems;
 
 public class CustomNetworkManager : NetworkManager
 {
+    [Header("Custom Varibles")]
     public string LocalNick;
+    public Team LocalTeam;
     public TelepathyTransport Transport;
 
 
     public void SetNick(TMP_InputField tmp_if)
     {
         LocalNick = tmp_if.text;
+    }
+
+    public void SetTeam(int TeamId)
+    {
+        LocalTeam = (Team)TeamId;
     }
 
     public override void OnServerConnect(NetworkConnection conn)

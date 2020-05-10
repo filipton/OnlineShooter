@@ -1537,6 +1537,9 @@ MonoBehaviour:
   players: []
   cam: {fileID: 5786514638354079215}
   ph: {fileID: 5786514638354078803}
+  ps: {fileID: 5786514638354078809}
+  PlayerTabStatsText: {fileID: 366307984683794925, guid: c375a5fb8b198224c91956d341088809,
+    type: 3}
   PlayersCount: 0
   CurrentPlayer: 0
 --- !u!114 &5786514638354078830
@@ -1571,7 +1574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.05
+  syncInterval: 0.1
   MaxInMagazine: 30
   MaxInPlayer: 100
   InMagazine: 30
@@ -1595,6 +1598,7 @@ MonoBehaviour:
   Nick: 
   Kills: 0
   Deaths: 0
+  PlayerTeam: 0
 --- !u!114 &5786514638354078787
 MonoBehaviour:
   m_ObjectHideFlags: 0
