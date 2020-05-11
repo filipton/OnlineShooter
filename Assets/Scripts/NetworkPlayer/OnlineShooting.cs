@@ -50,7 +50,7 @@ public class OnlineShooting : NetworkBehaviour
                 LerpTime = -1;
                 RememberY = pml.rotationY;
             }
-            if(Input.GetKey(KeyCode.Mouse0) && NextTimeP <= 0 && ammo.CurrentMagazine.InMagazine > 0)
+            if(Input.GetKey(KeyCode.Mouse0) && NextTimeP <= 0 && ammo.CurrentInMagazine > 0)
             {
                 CmdShoot();
                 As.CmdSyncAudioClip("AkShot");
@@ -95,7 +95,7 @@ public class OnlineShooting : NetworkBehaviour
     public void CmdShoot()
     {
         //pos += origin * 0.4f;
-        if(NextTime <= 0 && ammo.CurrentMagazine.InMagazine > 0)
+        if(NextTime <= 0 && ammo.CurrentInMagazine > 0)
         {
             //RaycastHit[] hits = Physics.RaycastAll(pos, origin);
             RaycastHit[] hits = RaycastAllSort(cam.transform.position, cam.transform.forward);
@@ -175,7 +175,7 @@ public class OnlineShooting : NetworkBehaviour
                 }
             }
 
-            ammo.CurrentMagazine.InMagazine -= 1;
+            ammo.CurrentInMagazine -= 1;
             NextTime = ShootRate - 0.1f;
         }
     }

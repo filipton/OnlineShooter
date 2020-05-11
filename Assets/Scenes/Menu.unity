@@ -3030,7 +3030,7 @@ MonoBehaviour:
   showDebugMessages: 0
   serverTickRate: 128
   offlineScene: Assets/Scenes/Menu.unity
-  onlineScene: Assets/Scenes/MainScene.unity
+  onlineScene: Assets/Scenes/Maps/so_room.unity
   transport: {fileID: 1569880154}
   networkAddress: localhost
   maxConnections: 20

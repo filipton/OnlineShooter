@@ -31,7 +31,38 @@ public class PlayerStats : NetworkBehaviour
         {
             CustomNetworkManager cnm = FindObjectOfType<CustomNetworkManager>();
             CmdSetNick(cnm.LocalNick);
-            CmdChooseTeam(cnm.LocalTeam == Team.WithoutTeam ? Team.Team1 : cnm.LocalTeam);
+        }
+        if (isServer)
+            AutoSelectTeam();
+    }
+
+    [ServerCallback]
+    void AutoSelectTeam()
+    {
+        int Team1P = 0;
+        int Team2P = 0;
+
+        foreach(PlayerStats ps in FindObjectsOfType<PlayerStats>())
+        {
+            if(ps.PlayerTeam == Team.Team1)
+            {
+                Team1P += 1;
+                print("T1");
+            }
+            else if (ps.PlayerTeam == Team.Team2)
+            {
+                Team2P += 1;
+                print("T2");
+            }
+        }
+
+        if(Team1P == Team2P || Team1P < Team2P)
+        {
+            PlayerTeam = Team.Team1;
+        }
+        else if(Team1P > Team2P)
+        {
+            PlayerTeam = Team.Team2;
         }
     }
 
@@ -54,11 +85,5 @@ public class PlayerStats : NetworkBehaviour
 
             Nick = nick;
         }
-    }
-
-    [Command]
-    public void CmdChooseTeam(Team team)
-    {
-        PlayerTeam = team;
     }
 }

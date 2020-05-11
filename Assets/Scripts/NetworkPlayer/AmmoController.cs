@@ -26,10 +26,10 @@ public class AmmoController : NetworkBehaviour
     public int MaxMagazinesInPlayer = 5;
 
     [SyncVar]
-    public int InPlayer = 100;
+    public int InPlayer = 0;
 
     [SyncVar]
-    public AmmoMagazine CurrentMagazine;
+    public int CurrentInMagazine;
 
     public SyncAmmoMagazines AmmoMagazines = new SyncAmmoMagazines();
 
@@ -38,12 +38,13 @@ public class AmmoController : NetworkBehaviour
     [ServerCallback]
     private void Start()
     {
-        CurrentMagazine = new AmmoMagazine(MaxInMagazine);
-
+        CurrentInMagazine = MaxInMagazine;
         for(int i = 0; i < MaxMagazinesInPlayer; i++)
         {
             AmmoMagazines.Add(new AmmoMagazine(MaxInMagazine));
         }
+
+        RefreshAllInPlayerAmmo();
     }
 
     private void Update()
@@ -54,7 +55,7 @@ public class AmmoController : NetworkBehaviour
             {
                 CmdReload();
             }
-            LocalSceneObjects.singleton.AmmoText.text = $"<color={(CurrentMagazine.InMagazine < 6 ? "red" : "#51FF00")}>{CurrentMagazine.InMagazine}</color> <color=#FF3F00>/</color> <color={(InPlayer < MaxInMagazine ? "red" : "#51FF00")}>{InPlayer}</color>";
+            LocalSceneObjects.singleton.AmmoText.text = $"<color={(CurrentInMagazine < 6 ? "red" : "#51FF00")}>{CurrentInMagazine}</color> <color=#FF3F00>/</color> <color={(InPlayer < MaxInMagazine ? "red" : "#51FF00")}>{InPlayer}</color>";
         }
     }
 
@@ -63,16 +64,15 @@ public class AmmoController : NetworkBehaviour
     {
         if(InPlayer > 0)
         {
-            if (CurrentMagazine.InMagazine > 0)
+            if (CurrentInMagazine > 0)
             {
                 GameObject gb = Instantiate(AmmoBoxPrefab, transform.position, Quaternion.Euler(0, 0, 0));
                 NetworkServer.Spawn(gb);
-                gb.GetComponent<AmmoBox>().InMagazine = CurrentMagazine.InMagazine;
+                gb.GetComponent<AmmoBox>().InMagazine = CurrentInMagazine;
             }
 
-            int min = AmmoMagazines[0].InMagazine;
+            CurrentInMagazine = AmmoMagazines[0].InMagazine;
             AmmoMagazines.RemoveAt(0);
-            CurrentMagazine.InMagazine = min;
             RefreshAllInPlayerAmmo();
         }
     }
