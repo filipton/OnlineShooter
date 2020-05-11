@@ -17,9 +17,15 @@ public class AmmoBox : NetworkBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && (transform.position - C.transform.position).magnitude < 3f)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            C.CmdPickupAmmoBox(gameObject);
+            if (C == null)
+                C = FindObjectsOfType<AmmoController>().ToList().Find(x => x.isLocalPlayer);
+
+            if((transform.position - C.transform.position).magnitude < 3f)
+            {
+                C.CmdPickupAmmoBox(gameObject);
+            }
         }
     }
 }
