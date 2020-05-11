@@ -1577,6 +1577,7 @@ MonoBehaviour:
   syncInterval: 0.1
   MaxInMagazine: 30
   MaxInPlayer: 100
+  AmmoMagazines: []
   InMagazine: 30
   InPlayer: 100
   AmmoBoxPrefab: {fileID: 4431188933151926330, guid: 33002bcea20602948a97f58c9bfcbff3,
