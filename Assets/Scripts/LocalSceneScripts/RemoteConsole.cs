@@ -86,6 +86,6 @@ public class RemoteConsole : MonoBehaviour
 
     public string DateTime()
     {
-        return $"<b>[{System.DateTime.Now.Hour}:{System.DateTime.Now.Minute}:{System.DateTime.Now.Second}]</b>";
+        return $"<b>{System.DateTime.Now.ToString("[HH:mm:ss]")}</b>";
     }
 }

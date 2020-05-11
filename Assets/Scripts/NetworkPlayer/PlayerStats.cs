@@ -49,7 +49,7 @@ public class PlayerStats : NetworkBehaviour
         {
             if (nick.Length < 1)
             {
-                nick = $"NIENAZWANY GRACZZ! {GetComponent<NetworkIdentity>().netId}";
+                nick = $"NG{GetComponent<NetworkIdentity>().netId}";
             }
 
             Nick = nick;

@@ -28,12 +28,18 @@ public class RemoteAdmin : NetworkBehaviour
         switch (cmd)
         {
             case "add-ammo":
-                id.GetComponent<AmmoController>().InPlayer += int.Parse(parms);
-                ret = $"Ammo added to: Nick: {Nick}, Amount: {parms}";
+                int count = int.Parse(parms);
+                AmmoController ac = id.GetComponent<AmmoController>();
+                for (int i = 0; i < count; i++)
+                {
+                    ac.AmmoMagazines.Add(new AmmoMagazine(ac.MaxInMagazine));
+                }
+                ac.RefreshAllInPlayerAmmo();
+                ret = $"{Nick} got {parms} ammo magazines! ({parms}x30 ammo)";
                 break;
             case "play-sound":
                 id.GetComponent<AudioSync>().RpcSyncAudioClip(parms);
-                ret = $"Nick: {Nick}, Parms: {parms}";
+                ret = $"Played at position of {Nick} sound: {parms}";
                 break;
         }
 

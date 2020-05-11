@@ -13,10 +13,16 @@ public class CustomNetworkManager : NetworkManager
     public Team LocalTeam;
     public TelepathyTransport Transport;
 
+    public override void Awake()
+    {
+        base.Awake();
+        LocalNick = PlayerPrefs.GetString("nick");
+    }
 
     public void SetNick(TMP_InputField tmp_if)
     {
         LocalNick = tmp_if.text;
+        PlayerPrefs.SetString("nick", tmp_if.text);
     }
 
     public void SetTeam(int TeamId)
