@@ -72,8 +72,12 @@ public class PlayerHealth : NetworkBehaviour
             Health = 0;
             PlayerKilled = true;
             RpcKillPlayer();
-            GetComponent<PlayerStats>().Deaths += 1;
+            PlayerStats ps = GetComponent<PlayerStats>();
+
+            ps.Deaths += 1;
+            ps.AddMoney(300);
             damagingPlayer.Kills += 1;
+            damagingPlayer.AddMoney(1000);
         }
     }
 

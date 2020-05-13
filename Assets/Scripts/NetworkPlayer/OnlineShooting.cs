@@ -7,12 +7,12 @@ using UnityEngine;
 
 public class OnlineShooting : NetworkBehaviour
 {
-    [SyncVar]
-    public float NextTime = 0f;
     float NextTimeP = 0f;
 
     [SyncVar]
-    public float ShootRate = 0.1f;
+    public float ShootRate = 100f;
+    [SyncVar]
+    public float DamageMultiplier = 1;
 
     float DamagePlayerScanThreshold = 0.2f;
     float CreateBulletScanThreshold = 0.1f;
@@ -87,15 +87,15 @@ public class OnlineShooting : NetworkBehaviour
     [Server]
     void ServerTime()
     {
-        if(NextTime > 0)
-            NextTime -= Time.deltaTime;
+        if(NextTimeP > 0)
+            NextTimeP -= Time.deltaTime;
     }
 
     [Command]
     public void CmdShoot()
     {
         //pos += origin * 0.4f;
-        if(NextTime <= 0 && ammo.CurrentInMagazine > 0)
+        if(NextTimeP <= 0 && ammo.CurrentInMagazine > 0)
         {
             //RaycastHit[] hits = Physics.RaycastAll(pos, origin);
             RaycastHit[] hits = RaycastAllSort(cam.transform.position, cam.transform.forward);
@@ -122,7 +122,7 @@ public class OnlineShooting : NetworkBehaviour
                             if (BulletInpact >= DamagePlayerScanThreshold)
                             {
                                 HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
-                                hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact), GetComponent<PlayerStats>());
+                                hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact * DamageMultiplier), GetComponent<PlayerStats>());
                                 if(hitB.plyHealth.Health > 0)
                                 {
                                     As.RpcSyncAudioClip("death-sound");
@@ -176,7 +176,7 @@ public class OnlineShooting : NetworkBehaviour
             }
 
             ammo.CurrentInMagazine -= 1;
-            NextTime = ShootRate - 0.1f;
+            NextTimeP = ShootRate - 0.1f;
         }
     }
 

@@ -84,7 +84,7 @@ public class PlayerList : NetworkBehaviour
     {
         LocalSceneObjects.singleton.RoundsText.text = $"{RoundController.singleton.Team1Wins} / {RoundController.singleton.Team2Wins}";
         UpdateList();
-        yield return new WaitForSeconds(0.01f);
+        yield return new WaitForSeconds(0.05f);
         foreach (Player p in players.ToArray())
         {
             if (p.pStatsText == null && p.plist.ps.PlayerTeam != Team.WithoutTeam)

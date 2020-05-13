@@ -23,6 +23,9 @@ public class PlayerStats : NetworkBehaviour
     //public int Assists;
 
     [SyncVar]
+    public int Money = 800;
+
+    [SyncVar]
     public Team PlayerTeam;
 
     private void Start()
@@ -71,6 +74,17 @@ public class PlayerStats : NetworkBehaviour
     {
         Kills += k;
         Deaths += d;
+    }
+
+    [ServerCallback]
+    public void AddMoney(int amount)
+    {
+        Money += amount;
+
+        if(Money > 15000)
+        {
+            Money = 15000;
+        }
     }
 
     [Command]
