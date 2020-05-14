@@ -9,10 +9,23 @@ public enum Weapon
     Breaker
 }
 
+public enum AmmoType
+{
+    Light,
+    Heavy,
+    Radioactive
+}
+
 public class WeaponController : NetworkBehaviour
 {
     [SyncVar]
     public Weapon CurrentWeapon;
+
+    [SyncVar]
+    public AmmoType CurrentAmmoType;
+
+    [SyncVar]
+    public int CurrentSelectedWeaponIndex = 0;
 
     public OnlineShooting onlineShooting;
     public AmmoController ammoController;
@@ -26,25 +39,41 @@ public class WeaponController : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (isLocalPlayer)
+        {
+            int y = (int)Mathf.Clamp01(CurrentSelectedWeaponIndex - Input.mouseScrollDelta.y);
+            CmdChangeWeapon(y);
+        }
     }
 
     [Command]
-    public void CmdChangeWeapon(Weapon w)
+    public void CmdChangeWeapon(int currWeapon)
     {
-        ServerChangeWeapon(w);
+        CurrentSelectedWeaponIndex = currWeapon;
+        Weapon w = (Weapon)CurrentSelectedWeaponIndex;
+        CurrentWeapon = w;
+        CurrentAmmoType = WeaponStats.GetAmmoType(w);
+        ServerChangeWeapon(w, WeaponStats.GetAmmoType(w));
+        ammoController.RefreshCurrentAmmoInMagazine();
     }
 
-    void ServerChangeWeapon(Weapon w)
-    {
+    [ServerCallback]
+    void ServerChangeWeapon(Weapon w, AmmoType at)
+    {       
         onlineShooting.ShootRate = WeaponStats.GetFireRate(w);
         onlineShooting.DamageMultiplier = WeaponStats.GetDamgeMultiplier(w);
-        ammoController.MaxInMagazine = WeaponStats.GetMaxMagazineSize(w);
+        ammoController.MaxInMagazine = WeaponStats.GetMaxMagazineSize(at);
+
+        ammoController.RefreshAllInPlayerAmmo();
     }
 
     private void OnValidate()
     {
-        CmdChangeWeapon(CurrentWeapon);
+        if (isClient)
+        {
+            CurrentAmmoType = WeaponStats.GetAmmoType(CurrentWeapon);
+            CmdChangeWeapon((int)CurrentWeapon);
+        }
     }
 }
 
@@ -63,14 +92,16 @@ public class WeaponStats
         return 0;
     }
 
-    public static int GetMaxMagazineSize(Weapon w)
+    public static int GetMaxMagazineSize(AmmoType at)
     {
-        switch (w)
+        switch (at)
         {
-            case Weapon.Defender:
+            case AmmoType.Heavy:
                 return 20;
-            case Weapon.Breaker:
+            case AmmoType.Light:
                 return 30;
+            case AmmoType.Radioactive:
+                return 10;
         }
 
         return 0;
@@ -84,6 +115,19 @@ public class WeaponStats
                 return 1;
             case Weapon.Breaker:
                 return 0.85f;
+        }
+
+        return 0;
+    }
+
+    public static AmmoType GetAmmoType(Weapon w)
+    {
+        switch (w)
+        {
+            case Weapon.Defender:
+                return AmmoType.Heavy;
+            case Weapon.Breaker:
+                return AmmoType.Light;
         }
 
         return 0;

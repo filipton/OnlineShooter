@@ -30,9 +30,10 @@ public class RemoteAdmin : NetworkBehaviour
             case "add-ammo":
                 int count = int.Parse(parms);
                 AmmoController ac = id.GetComponent<AmmoController>();
+                WeaponController wc = id.GetComponent<WeaponController>();
                 for (int i = 0; i < count; i++)
                 {
-                    ac.AmmoMagazines.Add(new AmmoMagazine(ac.MaxInMagazine));
+                    ac.GetAmmoMagazines(wc.CurrentAmmoType).Add(new AmmoMagazine(ac.MaxInMagazine));
                 }
                 ac.RefreshAllInPlayerAmmo();
                 ret = $"{Nick} got {parms} ammo magazines! ({parms}x30 ammo)";

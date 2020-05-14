@@ -1463,7 +1463,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 1.63
+  syncInterval: 0.1
   ShootRate: 0.25
   DamageMultiplier: 1
   HitBoxLayer:
@@ -1517,6 +1517,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   CurrentWeapon: 0
+  CurrentAmmoType: 1
+  CurrentSelectedWeaponIndex: 0
   onlineShooting: {fileID: 5786514638354078827}
   ammoController: {fileID: 5786514638354078821}
 --- !u!114 &5786514638354078821
@@ -1537,6 +1539,7 @@ MonoBehaviour:
   MaxMagazinesInPlayer: 5
   InPlayer: 100
   CurrentInMagazine: 0
+  weaponController: {fileID: 5622537228805379706}
   AmmoBoxPrefab: {fileID: 4431188933151926330, guid: 33002bcea20602948a97f58c9bfcbff3,
     type: 3}
 --- !u!114 &5786514638354078803

@@ -8,6 +8,9 @@ public class AmmoBox : NetworkBehaviour
 {
     [SyncVar]
     public int InMagazine = 30;
+    [SyncVar]
+    public AmmoType MagazineAmmoType;
+
     public AmmoController C;
 
     private void Start()

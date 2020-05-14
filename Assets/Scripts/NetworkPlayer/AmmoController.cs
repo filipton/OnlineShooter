@@ -31,19 +31,35 @@ public class AmmoController : NetworkBehaviour
     [SyncVar]
     public int CurrentInMagazine;
 
-    public SyncAmmoMagazines AmmoMagazines = new SyncAmmoMagazines();
+    public WeaponController weaponController;
+
+    public SyncAmmoMagazines HeavyAmmoMagazines = new SyncAmmoMagazines();
+    public SyncAmmoMagazines LightAmmoMagazines = new SyncAmmoMagazines();
+    public SyncAmmoMagazines RadioactiveAmmoMagazines = new SyncAmmoMagazines();
+
+    [Header("CurrentMagazine Of Ammo Types")]
+    [SyncVar]
+    public AmmoMagazine CurrentHeavyAmmoMagazine = new AmmoMagazine();
+    [SyncVar]
+    public AmmoMagazine CurrentLightAmmoMagazine = new AmmoMagazine();
+    [SyncVar]
+    public AmmoMagazine CurrentRadiactiveAmmoMagazine = new AmmoMagazine();
 
     public GameObject AmmoBoxPrefab;
 
     [ServerCallback]
     private void Start()
     {
-        CurrentInMagazine = MaxInMagazine;
-        for(int i = 0; i < MaxMagazinesInPlayer; i++)
-        {
-            AmmoMagazines.Add(new AmmoMagazine(MaxInMagazine));
-        }
+        //for testing before buing ammo system
 
+        for(int x = 0; x < 3; x++)
+        {
+            for (int i = 0; i < MaxMagazinesInPlayer; i++)
+            {
+                GetAmmoMagazines((AmmoType)x).Add(new AmmoMagazine(WeaponStats.GetMaxMagazineSize((AmmoType)x)));
+                SetDefaultAmmoByAmmoType((AmmoType)x);
+            }
+        }
         RefreshAllInPlayerAmmo();
     }
 
@@ -68,11 +84,13 @@ public class AmmoController : NetworkBehaviour
             {
                 GameObject gb = Instantiate(AmmoBoxPrefab, transform.position, Quaternion.Euler(0, 0, 0));
                 NetworkServer.Spawn(gb);
-                gb.GetComponent<AmmoBox>().InMagazine = CurrentInMagazine;
+                AmmoBox ab = gb.GetComponent<AmmoBox>();
+                ab.InMagazine = CurrentInMagazine;
+                ab.MagazineAmmoType= weaponController.CurrentAmmoType;
             }
 
-            CurrentInMagazine = AmmoMagazines[0].InMagazine;
-            AmmoMagazines.RemoveAt(0);
+            SetAmmoInCurrentMagazine(GetAmmoMagazines(weaponController.CurrentAmmoType)[0].InMagazine);
+            GetAmmoMagazines(weaponController.CurrentAmmoType).RemoveAt(0);
             RefreshAllInPlayerAmmo();
         }
     }
@@ -81,22 +99,98 @@ public class AmmoController : NetworkBehaviour
     public void RefreshAllInPlayerAmmo()
     {
         int inPlayer = 0;
-        foreach (AmmoMagazine am in AmmoMagazines)
+        foreach (AmmoMagazine am in GetAmmoMagazines(weaponController.CurrentAmmoType))
         {
             inPlayer += am.InMagazine;
         }
         InPlayer = inPlayer;
     }
 
+    [ServerCallback]
+    public void RefreshCurrentAmmoInMagazine()
+    {
+        CurrentInMagazine = GetCurrentAmmoInMagazine();
+    }
+
     [Command]
     public void CmdPickupAmmoBox(GameObject gbAmmoBox)
     {
-        if((transform.position - gbAmmoBox.transform.position).magnitude < 3f && AmmoMagazines.Count < MaxMagazinesInPlayer)
+        AmmoBox ab = gbAmmoBox.GetComponent<AmmoBox>();
+        if(ab != null && (transform.position - gbAmmoBox.transform.position).magnitude < 3f && GetAmmoMagazines(ab.MagazineAmmoType).Count < MaxMagazinesInPlayer)
         {
-            AmmoMagazines.Add(new AmmoMagazine(gbAmmoBox.GetComponent<AmmoBox>().InMagazine));
+            GetAmmoMagazines(ab.MagazineAmmoType).Add(new AmmoMagazine(ab.InMagazine));
             NetworkServer.UnSpawn(gbAmmoBox);
             NetworkServer.Destroy(gbAmmoBox);
             RefreshAllInPlayerAmmo();
         }
+    }
+
+    public SyncAmmoMagazines GetAmmoMagazines(AmmoType at)
+    {
+        return at.Equals(AmmoType.Heavy) ? HeavyAmmoMagazines : (at.Equals(AmmoType.Light) ? LightAmmoMagazines : RadioactiveAmmoMagazines);
+    }
+
+    //for testing before buing ammo system
+    [ServerCallback]
+    public void SetDefaultAmmoByAmmoType(AmmoType at)
+    {
+        switch (at)
+        {
+            case AmmoType.Heavy:
+                CurrentHeavyAmmoMagazine.InMagazine = WeaponStats.GetMaxMagazineSize(at);
+                break;
+            case AmmoType.Light:
+                CurrentLightAmmoMagazine.InMagazine = WeaponStats.GetMaxMagazineSize(at);
+                break;
+            case AmmoType.Radioactive:
+                CurrentRadiactiveAmmoMagazine.InMagazine = WeaponStats.GetMaxMagazineSize(at);
+                break;
+        }
+    }
+
+    [ServerCallback]
+    public void RemoveAmmoInCurrentMagazine(int amount)
+    {
+        AmmoType at = weaponController.CurrentAmmoType;
+        switch (at)
+        {
+            case AmmoType.Heavy:
+                CurrentHeavyAmmoMagazine.InMagazine -= amount;
+                break;
+            case AmmoType.Light:
+                CurrentLightAmmoMagazine.InMagazine -= amount;
+                break;
+            case AmmoType.Radioactive:
+                CurrentRadiactiveAmmoMagazine.InMagazine -= amount;
+                break;
+        }
+
+        RefreshCurrentAmmoInMagazine();
+    }
+
+    [ServerCallback]
+    public void SetAmmoInCurrentMagazine(int amount)
+    {
+        AmmoType at = weaponController.CurrentAmmoType;
+        switch (at)
+        {
+            case AmmoType.Heavy:
+                CurrentHeavyAmmoMagazine.InMagazine = amount;
+                break;
+            case AmmoType.Light:
+                CurrentLightAmmoMagazine.InMagazine = amount;
+                break;
+            case AmmoType.Radioactive:
+                CurrentRadiactiveAmmoMagazine.InMagazine = amount;
+                break;
+        }
+
+        RefreshCurrentAmmoInMagazine();
+    }
+
+    public int GetCurrentAmmoInMagazine()
+    {
+        AmmoType at = weaponController.CurrentAmmoType;
+        return (at.Equals(AmmoType.Heavy) ? CurrentHeavyAmmoMagazine : (at.Equals(AmmoType.Light) ? CurrentLightAmmoMagazine : CurrentRadiactiveAmmoMagazine)).InMagazine;
     }
 }

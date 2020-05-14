@@ -175,7 +175,7 @@ public class OnlineShooting : NetworkBehaviour
                 }
             }
 
-            ammo.CurrentInMagazine -= 1;
+            ammo.RemoveAmmoInCurrentMagazine(1);
             NextTimeP = ShootRate - 0.1f;
         }
     }
