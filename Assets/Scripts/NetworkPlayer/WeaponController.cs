@@ -1,10 +1,12 @@
 ﻿using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public enum Weapon
 {
+    Knfie,
     Defender,
     Breaker
 }
@@ -27,6 +29,9 @@ public class WeaponController : NetworkBehaviour
     [SyncVar]
     public int CurrentSelectedWeaponIndex = 0;
 
+    public Material[] Mats = new Material[2];
+    public GameObject[] Weapons = new GameObject[2];
+
     public OnlineShooting onlineShooting;
     public AmmoController ammoController;
 
@@ -41,20 +46,26 @@ public class WeaponController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            int y = (int)Mathf.Clamp01(CurrentSelectedWeaponIndex - Input.mouseScrollDelta.y);
-            CmdChangeWeapon(y);
+            int y = (int)(-Input.mouseScrollDelta.y);
+
+            if(y != 0)
+            {
+                CmdChangeWeapon(y);
+            }
         }
     }
 
     [Command]
     public void CmdChangeWeapon(int currWeapon)
     {
-        CurrentSelectedWeaponIndex = currWeapon;
+        CurrentSelectedWeaponIndex -= currWeapon;
+        CurrentSelectedWeaponIndex = Mathf.Clamp(CurrentSelectedWeaponIndex, 0, 2);
         Weapon w = (Weapon)CurrentSelectedWeaponIndex;
         CurrentWeapon = w;
         CurrentAmmoType = WeaponStats.GetAmmoType(w);
         ServerChangeWeapon(w, WeaponStats.GetAmmoType(w));
         ammoController.RefreshCurrentAmmoInMagazine();
+        RpcChangeWeaponColor(currWeapon);
     }
 
     [ServerCallback]
@@ -65,6 +76,29 @@ public class WeaponController : NetworkBehaviour
         ammoController.MaxInMagazine = WeaponStats.GetMaxMagazineSize(at);
 
         ammoController.RefreshAllInPlayerAmmo();
+    }
+
+    [ClientRpc]
+    public void RpcChangeWeaponColor(int ind)
+    {
+        Material m = Mats[0];
+        switch (ind)
+        {
+            case 0:
+                m = Mats[0];
+                break;
+            case 1:
+                m = Mats[1];
+                break;
+
+        }
+        foreach(GameObject gb in Weapons)
+        {
+            foreach (MeshRenderer mesh in gb.GetComponentsInChildren<MeshRenderer>())
+            {
+                mesh.material = m;
+            }
+        }
     }
 
     private void OnValidate()
@@ -84,9 +118,9 @@ public class WeaponStats
         switch (w)
         {
             case Weapon.Defender:
-                return 0.25f;
+                return 0.15f;
             case Weapon.Breaker:
-                return 0.2f;
+                return 0.1f;
         }
 
         return 0;
@@ -115,6 +149,19 @@ public class WeaponStats
                 return 1;
             case Weapon.Breaker:
                 return 0.85f;
+        }
+
+        return 0;
+    }
+
+    public static int GetWeaponCost(Weapon w)
+    {
+        switch (w)
+        {
+            case Weapon.Defender:
+                return 3200;
+            case Weapon.Breaker:
+                return 2900;
         }
 
         return 0;

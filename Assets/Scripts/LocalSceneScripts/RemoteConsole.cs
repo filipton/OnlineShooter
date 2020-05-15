@@ -27,24 +27,26 @@ public class RemoteConsole : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float y = -Input.mouseScrollDelta.y * Scale;
-        if(y != 0)
+        if (ConsoleRoot.activeSelf)
         {
-            Vector3 pos = Content.transform.localPosition;
-            pos.y += y;
-
-            if(pos.y < yMin)
+            float y = -Input.mouseScrollDelta.y * Scale;
+            if (y != 0)
             {
-                pos.y = yMin;
-            }
-            else if(pos.y > yMax)
-            {
-                pos.y = yMax;
-            }
+                Vector3 pos = Content.transform.localPosition;
+                pos.y += y;
 
-            Content.transform.localPosition = pos;
+                if (pos.y < yMin)
+                {
+                    pos.y = yMin;
+                }
+                else if (pos.y > yMax)
+                {
+                    pos.y = yMax;
+                }
+
+                Content.transform.localPosition = pos;
+            }
         }
-
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             ConsoleRoot.SetActive(!ConsoleRoot.activeSelf);
