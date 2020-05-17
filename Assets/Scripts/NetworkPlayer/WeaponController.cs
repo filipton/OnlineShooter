@@ -15,7 +15,8 @@ public enum AmmoType
 {
     Light,
     Heavy,
-    Radioactive
+    Radioactive,
+    KnifeAmmo
 }
 
 public class WeaponController : NetworkBehaviour
@@ -61,7 +62,7 @@ public class WeaponController : NetworkBehaviour
         if(economySystem.PlayerWeapons.Count > 0)
         {
             CurrentSelectedWeaponIndex -= currWeapon;
-            CurrentSelectedWeaponIndex = Mathf.Clamp(CurrentSelectedWeaponIndex, 0, economySystem.PlayerWeapons.Count);
+            CurrentSelectedWeaponIndex = Mathf.Clamp(CurrentSelectedWeaponIndex, 0, economySystem.PlayerWeapons.Count - 1);
             Weapon w = economySystem.PlayerWeapons[CurrentSelectedWeaponIndex];
             CurrentWeapon = w;
             CurrentAmmoType = WeaponStats.GetAmmoType(w);
@@ -128,9 +129,11 @@ public class WeaponStats
                 return 0.15f;
             case Weapon.Breaker:
                 return 0.1f;
+            case Weapon.Knife:
+                return 0.5f;
         }
 
-        return 0;
+        return 100;
     }
 
     public static int GetMaxMagazineSize(AmmoType at)
@@ -143,6 +146,8 @@ public class WeaponStats
                 return 30;
             case AmmoType.Radioactive:
                 return 10;
+            case AmmoType.KnifeAmmo:
+                return 25;
         }
 
         return 0;
@@ -156,6 +161,8 @@ public class WeaponStats
                 return 1;
             case Weapon.Breaker:
                 return 0.85f;
+            case Weapon.Knife:
+                return 2;
         }
 
         return 0;
@@ -184,8 +191,21 @@ public class WeaponStats
                 return AmmoType.Heavy;
             case Weapon.Breaker:
                 return AmmoType.Light;
+            case Weapon.Knife:
+                return AmmoType.KnifeAmmo;
         }
 
         return 0;
+    }
+
+    public static float GetMaxDistance(Weapon w)
+    {
+        switch (w)
+        {
+            case Weapon.Knife:
+                return 1f;
+        }
+
+        return 250;
     }
 }

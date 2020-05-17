@@ -834,7 +834,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 15
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &471845295225429193
 MonoBehaviour:
@@ -849,7 +848,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 5
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &5830896740441882966
 MonoBehaviour:
@@ -864,7 +862,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 15
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &4492491035341015577
 MonoBehaviour:
@@ -879,7 +876,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 15
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &4484965751313476165
 MonoBehaviour:
@@ -894,7 +890,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 10
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &6367967481658059461
 MonoBehaviour:
@@ -909,7 +904,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 10
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &845301000400216635
 MonoBehaviour:
@@ -924,7 +918,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 40
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &1349271808288893573
 MonoBehaviour:
@@ -939,7 +932,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 10
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &5520101043250047879
 MonoBehaviour:
@@ -954,7 +946,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 5
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!95 &6549331553404980449
 Animator:
@@ -988,7 +979,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 100
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &6883998222793077440
 MonoBehaviour:
@@ -1003,7 +993,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 60
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &1124051893085654595
 MonoBehaviour:
@@ -1018,7 +1007,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 20
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &4487353597721310649
 MonoBehaviour:
@@ -1033,7 +1021,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 10
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &8988562994111135931
 MonoBehaviour:
@@ -1048,7 +1035,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 5
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &1874087505265155951
 MonoBehaviour:
@@ -1063,7 +1049,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 15
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &8445021804683526594
 MonoBehaviour:
@@ -1078,7 +1063,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 80
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &6466034756970671269
 MonoBehaviour:
@@ -1093,7 +1077,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 5
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &9156790494565177737
 MonoBehaviour:
@@ -1108,7 +1091,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 20
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &8241477830356664454
 MonoBehaviour:
@@ -1123,7 +1105,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 5
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!1 &5786514638354079043
 GameObject:
@@ -1503,6 +1484,7 @@ MonoBehaviour:
   PH: {fileID: 5786514638354078803}
   As: {fileID: 5786514638354078805}
   ammo: {fileID: 5786514638354078821}
+  weaponController: {fileID: 5622537228805379706}
 --- !u!114 &6498822185038209202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1890,7 +1872,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 25
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &6482856344167017940
 MonoBehaviour:
@@ -1905,7 +1886,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 5
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &8826278559291261092
 MonoBehaviour:
@@ -1920,7 +1900,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 25
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &2870221310585876780
 MonoBehaviour:
@@ -1935,7 +1914,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 15
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &763005676778007654
 MonoBehaviour:
@@ -1950,7 +1928,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 45
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!114 &235664001828953094
 MonoBehaviour:
@@ -1965,7 +1942,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 15
-  HighLight: 0
   plyHealth: {fileID: 5786514638354078803}
 --- !u!1001 &1898916784
 PrefabInstance:

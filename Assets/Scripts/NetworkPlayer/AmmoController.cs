@@ -39,6 +39,8 @@ public class AmmoController : NetworkBehaviour
 
     [Header("CurrentMagazine Of Ammo Types")]
     [SyncVar]
+    public AmmoMagazine CurrentKnifeDurability = new AmmoMagazine();
+    [SyncVar]
     public AmmoMagazine CurrentHeavyAmmoMagazine = new AmmoMagazine();
     [SyncVar]
     public AmmoMagazine CurrentLightAmmoMagazine = new AmmoMagazine();
@@ -71,7 +73,7 @@ public class AmmoController : NetworkBehaviour
             {
                 CmdReload();
             }
-            LocalSceneObjects.singleton.AmmoText.text = $"<color={(CurrentInMagazine < 6 ? "red" : "#51FF00")}>{CurrentInMagazine}</color> <color=#FF3F00>/</color> <color={(InPlayer < MaxInMagazine ? "red" : "#51FF00")}>{InPlayer}</color>";
+            LocalSceneObjects.singleton.AmmoText.text = $"<color={(CurrentInMagazine < 6 ? "red" : "#51FF00")}>{CurrentInMagazine}</color> {(InPlayer > -1 ? $"<color=#FF3F00>/</color> <color={(InPlayer < MaxInMagazine ? "red" : "#51FF00")}>{InPlayer}</color>" : "")}";
         }
     }
 
@@ -99,9 +101,17 @@ public class AmmoController : NetworkBehaviour
     public void RefreshAllInPlayerAmmo()
     {
         int inPlayer = 0;
-        foreach (AmmoMagazine am in GetAmmoMagazines(weaponController.CurrentAmmoType))
+        SyncAmmoMagazines sam = GetAmmoMagazines(weaponController.CurrentAmmoType);
+        if(sam != null)
         {
-            inPlayer += am.InMagazine;
+            foreach (AmmoMagazine am in sam)
+            {
+                inPlayer += am.InMagazine;
+            }
+        }
+        else
+        {
+            inPlayer = -1;
         }
         InPlayer = inPlayer;
     }
@@ -145,6 +155,9 @@ public class AmmoController : NetworkBehaviour
             case AmmoType.Radioactive:
                 CurrentRadiactiveAmmoMagazine.InMagazine = WeaponStats.GetMaxMagazineSize(at);
                 break;
+            case AmmoType.KnifeAmmo:
+                CurrentKnifeDurability.InMagazine = WeaponStats.GetMaxMagazineSize(at);
+                break;
         }
     }
 
@@ -162,6 +175,9 @@ public class AmmoController : NetworkBehaviour
                 break;
             case AmmoType.Radioactive:
                 CurrentRadiactiveAmmoMagazine.InMagazine -= amount;
+                break;
+            case AmmoType.KnifeAmmo:
+                CurrentKnifeDurability.InMagazine -= amount;
                 break;
         }
 
@@ -183,6 +199,9 @@ public class AmmoController : NetworkBehaviour
             case AmmoType.Radioactive:
                 CurrentRadiactiveAmmoMagazine.InMagazine = amount;
                 break;
+            case AmmoType.KnifeAmmo:
+                CurrentKnifeDurability.InMagazine = amount;
+                break;
         }
 
         RefreshCurrentAmmoInMagazine();
@@ -191,6 +210,23 @@ public class AmmoController : NetworkBehaviour
     public int GetCurrentAmmoInMagazine()
     {
         AmmoType at = weaponController.CurrentAmmoType;
-        return (at.Equals(AmmoType.Heavy) ? CurrentHeavyAmmoMagazine : (at.Equals(AmmoType.Light) ? CurrentLightAmmoMagazine : CurrentRadiactiveAmmoMagazine)).InMagazine;
+        int am = 0;
+        switch (at)
+        {
+            case AmmoType.Heavy:
+                am = CurrentHeavyAmmoMagazine.InMagazine;
+                break;
+            case AmmoType.Light:
+                am = CurrentLightAmmoMagazine.InMagazine;
+                break;
+            case AmmoType.Radioactive:
+                am = CurrentRadiactiveAmmoMagazine.InMagazine;
+                break;
+            case AmmoType.KnifeAmmo:
+                am = CurrentKnifeDurability.InMagazine;
+                break;
+        }
+
+        return am;
     }
 }

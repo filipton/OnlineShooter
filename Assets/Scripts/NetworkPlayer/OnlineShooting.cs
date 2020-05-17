@@ -27,6 +27,7 @@ public class OnlineShooting : NetworkBehaviour
     public PlayerHealth PH;
     public AudioSync As;
     public AmmoController ammo;
+    public WeaponController weaponController;
 
     float LerpTime = -1;
     float RememberY = 0;
@@ -119,7 +120,7 @@ public class OnlineShooting : NetworkBehaviour
                     {
                         if (FiltredHits[i].transform.gameObject.CompareTag("HitBox"))
                         {
-                            if (BulletInpact >= DamagePlayerScanThreshold)
+                            if (BulletInpact >= DamagePlayerScanThreshold && FiltredHits[i].distance <= WeaponStats.GetMaxDistance(weaponController.CurrentWeapon))
                             {
                                 HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
                                 hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact * DamageMultiplier), GetComponent<PlayerStats>());
