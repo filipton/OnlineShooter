@@ -58,14 +58,17 @@ public class WeaponController : NetworkBehaviour
     [Command]
     public void CmdChangeWeapon(int currWeapon)
     {
-        CurrentSelectedWeaponIndex -= currWeapon;
-        CurrentSelectedWeaponIndex = Mathf.Clamp(CurrentSelectedWeaponIndex, 0, 2);
-        Weapon w = (Weapon)CurrentSelectedWeaponIndex;
-        CurrentWeapon = w;
-        CurrentAmmoType = WeaponStats.GetAmmoType(w);
-        ServerChangeWeapon(w, WeaponStats.GetAmmoType(w));
-        ammoController.RefreshCurrentAmmoInMagazine();
-        RpcChangeWeaponColor(CurrentSelectedWeaponIndex);
+        if(economySystem.PlayerWeapons.Count > 0)
+        {
+            CurrentSelectedWeaponIndex -= currWeapon;
+            CurrentSelectedWeaponIndex = Mathf.Clamp(CurrentSelectedWeaponIndex, 0, economySystem.PlayerWeapons.Count);
+            Weapon w = economySystem.PlayerWeapons[CurrentSelectedWeaponIndex];
+            CurrentWeapon = w;
+            CurrentAmmoType = WeaponStats.GetAmmoType(w);
+            ServerChangeWeapon(w, WeaponStats.GetAmmoType(w));
+            ammoController.RefreshCurrentAmmoInMagazine();
+            RpcChangeWeaponColor(CurrentSelectedWeaponIndex);
+        }
     }
 
     [ServerCallback]

@@ -37,24 +37,27 @@ public class NetworkSync : NetworkBehaviour
         }
         else
         {
-            float xzdistspeed = (new Vector2(pos.x, pos.z) - new Vector2(old_position.x, old_position.z)).magnitude;
-            float ydistspeed = Mathf.Abs(pos.y - old_position.y);
+            if (pos != old_position)
+            {
+                float xzdistspeed = (new Vector2(pos.x, pos.z) - new Vector2(old_position.x, old_position.z)).magnitude;
+                float ydistspeed = Mathf.Abs(pos.y - old_position.y);
 
-            if (xzdistspeed > MaxXZ)
-            {
-                MaxXZ = xzdistspeed;
-            }
-            if (ydistspeed > MaxY)
-            {
-                MaxY = ydistspeed;
-            }
+                if (xzdistspeed > MaxXZ)
+                {
+                    MaxXZ = xzdistspeed;
+                }
+                if (ydistspeed > MaxY)
+                {
+                    MaxY = ydistspeed;
+                }
 
-            if (xzdistspeed > MovementThresholdXZ || ydistspeed > MovementThresholdY)
-            {
-                pos = old_position;
-                TargetRpcMoveBackPlayer(this.GetComponent<NetworkIdentity>().connectionToClient, pos);
+                if (xzdistspeed > MovementThresholdXZ || ydistspeed > MovementThresholdY)
+                {
+                    pos = old_position;
+                    TargetRpcMoveBackPlayer(this.GetComponent<NetworkIdentity>().connectionToClient, pos);
+                }
+                old_position = pos;
             }
-            old_position = pos;
         }
 
         RpcMovePlayer(pos, rot, camRot, nid);
@@ -82,7 +85,6 @@ public class NetworkSync : NetworkBehaviour
         this.transform.position = pos;
         GetComponent<CharacterController>().enabled = true;
         GetComponent<PlayerMovement>().enabled = true;
-
     }
 
     IEnumerator SyncMovement()

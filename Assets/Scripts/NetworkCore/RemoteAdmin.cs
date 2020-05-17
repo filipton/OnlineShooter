@@ -42,6 +42,11 @@ public class RemoteAdmin : NetworkBehaviour
                 id.GetComponent<AudioSync>().RpcSyncAudioClip(parms);
                 ret = $"Played at position of {Nick} sound: {parms}";
                 break;
+            case "add-money":
+                int moneyCount = int.Parse(parms);
+                PlayerStats ps = id.GetComponent<PlayerStats>();
+                ps.AddMoney(moneyCount);
+                break;
         }
 
         TargetRpcCommandReturn(GetComponent<NetworkIdentity>().connectionToClient, ret);

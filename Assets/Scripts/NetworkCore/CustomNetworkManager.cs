@@ -1,4 +1,5 @@
 ﻿using Mirror;
+using Mirror.LiteNetLib4Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,12 +7,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CustomNetworkManager : NetworkManager
+public class CustomNetworkManager : LiteNetLib4MirrorNetworkManager
 {
     [Header("Custom Varibles")]
     public string LocalNick;
     public Team LocalTeam;
-    public TelepathyTransport Transport;
+    public LiteNetLib4MirrorTransport Transport;
 
     public override void Awake()
     {
