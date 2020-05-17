@@ -6,7 +6,7 @@ using UnityEngine;
 
 public enum Weapon
 {
-    Knfie,
+    Knife,
     Defender,
     Breaker
 }
@@ -32,6 +32,7 @@ public class WeaponController : NetworkBehaviour
     public Material[] Mats = new Material[2];
     public GameObject[] Weapons = new GameObject[2];
 
+    public EconomySystem economySystem;
     public OnlineShooting onlineShooting;
     public AmmoController ammoController;
 
@@ -41,7 +42,6 @@ public class WeaponController : NetworkBehaviour
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (isLocalPlayer)
@@ -65,7 +65,7 @@ public class WeaponController : NetworkBehaviour
         CurrentAmmoType = WeaponStats.GetAmmoType(w);
         ServerChangeWeapon(w, WeaponStats.GetAmmoType(w));
         ammoController.RefreshCurrentAmmoInMagazine();
-        RpcChangeWeaponColor(currWeapon);
+        RpcChangeWeaponColor(CurrentSelectedWeaponIndex);
     }
 
     [ServerCallback]
@@ -82,13 +82,17 @@ public class WeaponController : NetworkBehaviour
     public void RpcChangeWeaponColor(int ind)
     {
         Material m = Mats[0];
-        switch (ind)
+        Weapon currW = economySystem.PlayerWeapons[ind];
+        switch (currW)
         {
-            case 0:
+            case Weapon.Defender:
                 m = Mats[0];
                 break;
-            case 1:
+            case Weapon.Breaker:
                 m = Mats[1];
+                break;
+            case Weapon.Knife:
+                m = null;
                 break;
 
         }
@@ -162,6 +166,8 @@ public class WeaponStats
                 return 3200;
             case Weapon.Breaker:
                 return 2900;
+            case Weapon.Knife:
+                return 100;
         }
 
         return 0;

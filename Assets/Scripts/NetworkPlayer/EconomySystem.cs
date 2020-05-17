@@ -31,7 +31,9 @@ public class EconomySystem : NetworkBehaviour
     public void CmdBuyWeapon(Weapon w)
     {
         int weaponsC = PlayerWeapons.Count;
-        if (weaponsC < 3 && !WeaponAlready(w))
+        int Wcost = WeaponStats.GetWeaponCost(w);
+
+        if (weaponsC < 3 && !WeaponAlready(w) && playerStats.Money >= Wcost)
         {
             bool isK = CheckIfKnife();
 
@@ -41,16 +43,16 @@ public class EconomySystem : NetworkBehaviour
             {
                 if(weaponsCWK < 2)
                 {
+                    playerStats.Money -= Wcost;
                     PlayerWeapons.Add(w);
-                    print($"{w} BUGHT! 1");
                 }
             }
             else
             {
-                if(weaponsC < 2 || w == Weapon.Knfie)
+                if(weaponsC < 2 || w == Weapon.Knife)
                 {
+                    playerStats.Money -= Wcost;
                     PlayerWeapons.Add(w);
-                    print($"{w} BUGHT! 2");
                 }
             }
         }
@@ -61,7 +63,7 @@ public class EconomySystem : NetworkBehaviour
         bool haveknife = false;
         foreach(Weapon w in PlayerWeapons)
         {
-            if(w == Weapon.Knfie)
+            if(w == Weapon.Knife)
             {
                 haveknife = true;
             }

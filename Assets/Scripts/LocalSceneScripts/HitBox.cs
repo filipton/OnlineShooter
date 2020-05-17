@@ -6,7 +6,6 @@ using UnityEngine;
 public class HitBox : MonoBehaviour
 {
     public float Damage;
-    public bool HighLight;
 
     public PlayerHealth plyHealth;
 

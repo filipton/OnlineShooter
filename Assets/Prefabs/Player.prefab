@@ -1541,6 +1541,7 @@ MonoBehaviour:
   Weapons:
   - {fileID: 8296172667860447929}
   - {fileID: 8492077710298607196}
+  economySystem: {fileID: 6498822185038209202}
   onlineShooting: {fileID: 5786514638354078827}
   ammoController: {fileID: 5786514638354078821}
 --- !u!114 &5786514638354078821
