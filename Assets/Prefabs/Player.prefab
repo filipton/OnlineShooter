@@ -1515,7 +1515,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   CurrentWeapon: 0
-  CurrentAmmoType: 1
+  CurrentAmmoType: 3
   CurrentSelectedWeaponIndex: 0
   Mats:
   - {fileID: 2100000, guid: a1eccc951666e5f409b658a3d50cf338, type: 2}
@@ -1542,9 +1542,11 @@ MonoBehaviour:
   syncInterval: 0.1
   MaxInMagazine: 20
   MaxMagazinesInPlayer: 5
-  InPlayer: 100
+  InPlayer: -1
   CurrentInMagazine: 0
   weaponController: {fileID: 5622537228805379706}
+  CurrentKnifeDurability:
+    InMagazine: 0
   CurrentHeavyAmmoMagazine:
     InMagazine: 0
   CurrentLightAmmoMagazine:

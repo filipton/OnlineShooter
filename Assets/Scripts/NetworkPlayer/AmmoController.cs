@@ -54,6 +54,8 @@ public class AmmoController : NetworkBehaviour
     {
         //for testing before buing ammo system
 
+        CurrentKnifeDurability = new AmmoMagazine(WeaponStats.GetMaxMagazineSize(AmmoType.KnifeAmmo));
+
         for(int x = 0; x < 3; x++)
         {
             for (int i = 0; i < MaxMagazinesInPlayer; i++)
@@ -109,7 +111,8 @@ public class AmmoController : NetworkBehaviour
                 inPlayer += am.InMagazine;
             }
         }
-        else
+
+        if (sam == null || weaponController.CurrentAmmoType == AmmoType.KnifeAmmo)
         {
             inPlayer = -1;
         }
