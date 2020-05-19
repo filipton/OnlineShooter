@@ -87,6 +87,13 @@ public class NetworkSync : NetworkBehaviour
         GetComponent<PlayerMovement>().enabled = true;
     }
 
+    [ServerCallback]
+    public void TpPlayer(Vector3 pos)
+    {
+        old_position = pos;
+        TargetRpcMoveBackPlayer(Nid.connectionToClient, pos);
+    }
+
     IEnumerator SyncMovement()
     {
         while (true)

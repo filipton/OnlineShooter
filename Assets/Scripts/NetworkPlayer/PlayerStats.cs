@@ -67,6 +67,16 @@ public class PlayerStats : NetworkBehaviour
         {
             PlayerTeam = Team.Team2;
         }
+
+        NetworkSync ns = GetComponent<NetworkSync>();
+        if(PlayerTeam == Team.Team1)
+        {
+            ns.TpPlayer(LocalSceneObjects.singleton.TeamASpawn.position);
+        }
+        else if(PlayerTeam == Team.Team2)
+        {
+            ns.TpPlayer(LocalSceneObjects.singleton.TeamBSpawn.position);
+        }
     }
 
     [ServerCallback]

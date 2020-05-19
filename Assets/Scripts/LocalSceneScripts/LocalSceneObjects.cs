@@ -17,6 +17,10 @@ public class LocalSceneObjects : MonoBehaviour
     public GameObject Team2;
     public TextMeshProUGUI RoundsText;
 
+    [Header("Team Spawn Points")]
+    public Transform TeamASpawn;
+    public Transform TeamBSpawn;
+
 
     private void Awake()
     {
