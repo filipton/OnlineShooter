@@ -154,7 +154,9 @@ public class BuildGame : EditorWindow
 
         BuildGame window = (BuildGame)GetWindow(typeof(BuildGame));
 
-        new WebClient().DownloadString($"http://34.89.232.15/launcher/updateGameVersion.php?v={$"{window.x}.{window.y}.{window.z}.{window.w}"}&a={gameVersion.author}");
+        string[] authorinfo = gameVersion.author.Split('#');
+
+        new WebClient().DownloadString($"http://34.89.232.15/launcher/updateGameVersion.php?v={$"{window.x}.{window.y}.{window.z}.{window.w}"}&a={authorinfo[0]}&t={authorinfo[1]}");
     }
 }
 
