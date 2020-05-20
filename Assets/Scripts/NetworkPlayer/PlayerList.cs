@@ -87,19 +87,42 @@ public class PlayerList : NetworkBehaviour
         yield return new WaitForSeconds(0.05f);
         foreach (Player p in players.ToArray())
         {
-            if (p.pStatsText == null && p.plist.ps.PlayerTeam != Team.WithoutTeam)
+            bool activePlayer = false;
+            foreach (NetworkIdentity nid in FindObjectsOfType<NetworkIdentity>())
             {
-                Transform trans = p.plist.ps.PlayerTeam == Team.Team1 ? LocalSceneObjects.singleton.Team1.transform : LocalSceneObjects.singleton.Team2.transform;
+                PlayerList pl = nid.GetComponent<PlayerList>();
 
-                GameObject playerLT = Instantiate(PlayerTabStatsText, trans);
-                TextMeshProUGUI pT = playerLT.GetComponent<TextMeshProUGUI>();
-                pT.text = $"{p.Name}   {p.plist.ps.Kills}|{p.plist.ps.Deaths}";
-                int index = players.FindIndex(x => x.Name == p.Name);
-                players[index] = new Player(p.Name, p.plist, pT);
+                if (pl != null)
+                {
+                    if(p.plist == pl)
+                    {
+                        activePlayer = true;
+                        break;
+                    }
+                }
+            }
+
+            if (activePlayer)
+            {
+                if (p.pStatsText == null && p.plist.ps.PlayerTeam != Team.WithoutTeam)
+                {
+                    Transform trans = p.plist.ps.PlayerTeam == Team.Team1 ? LocalSceneObjects.singleton.Team1.transform : LocalSceneObjects.singleton.Team2.transform;
+
+                    GameObject playerLT = Instantiate(PlayerTabStatsText, trans);
+                    TextMeshProUGUI pT = playerLT.GetComponent<TextMeshProUGUI>();
+                    pT.text = $"{p.Name}   {p.plist.ps.Kills}|{p.plist.ps.Deaths}";
+                    int index = players.FindIndex(x => x.Name == p.Name);
+                    players[index] = new Player(p.Name, p.plist, pT);
+                }
+                else
+                {
+                    p.pStatsText.text = $"{p.Name}   {p.plist.ps.Kills}|{p.plist.ps.Deaths}";
+                }
             }
             else
             {
-                p.pStatsText.text = $"{p.Name}   {p.plist.ps.Kills}|{p.plist.ps.Deaths}";
+                Destroy(p.pStatsText.gameObject);
+                players.Remove(p);
             }
         }
     }

@@ -90,6 +90,9 @@ public class NetworkSync : NetworkBehaviour
     [ServerCallback]
     public void TpPlayer(Vector3 pos)
     {
+        if (Nid == null)
+            Nid = GetComponent<NetworkIdentity>();
+
         old_position = pos;
         TargetRpcMoveBackPlayer(Nid.connectionToClient, pos);
     }
