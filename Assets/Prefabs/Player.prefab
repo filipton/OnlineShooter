@@ -1610,14 +1610,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  singleton: {fileID: 0}
-  ammoController: {fileID: 0}
-  economySystem: {fileID: 0}
-  onlineShooting: {fileID: 0}
-  playerHealth: {fileID: 0}
-  playerList: {fileID: 0}
-  playerStats: {fileID: 0}
-  weaponController: {fileID: 0}
   components:
   - {fileID: 5786514638354078786}
   - {fileID: 5786514638354078846}

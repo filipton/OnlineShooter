@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking.Types;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerHealth : NetworkBehaviour
@@ -44,19 +45,7 @@ public class PlayerHealth : NetworkBehaviour
             {
                 healthText.text = Health.ToString();
             }
-
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                RespawnButtonClick();
-            }
         }
-    }
-
-    public void RespawnButtonClick()
-    {
-        CmdRespawnPlayer();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     public void CmdRemoveHealth(int amount, PlayerStats damagingPlayer)
@@ -78,6 +67,44 @@ public class PlayerHealth : NetworkBehaviour
             ps.AddMoney(300);
             damagingPlayer.Kills += 1;
             damagingPlayer.AddMoney(1000);
+            RoundController.singleton.CheckIfTeamAnyWin();
+
+            StartCoroutine(EndRound(5f));
+        }
+    }
+
+    [ServerCallback]
+    IEnumerator EndRound(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        foreach(AmmoBox gbAmmoBox in FindObjectsOfType<AmmoBox>())
+        {
+            NetworkServer.UnSpawn(gbAmmoBox.gameObject);
+            NetworkServer.Destroy(gbAmmoBox.gameObject);
+        }
+
+        foreach(PlayerStats p in FindObjectsOfType<PlayerStats>())
+        {
+            NetworkSync ns = p.GetComponent<NetworkSync>();
+            PlayerHealth ph = p.GetComponent<PlayerHealth>();
+
+            if (p.PlayerTeam == Team.Team1)
+            {
+                ns.TpPlayer(LocalSceneObjects.singleton.TeamASpawn.position);
+            }
+            else if (p.PlayerTeam == Team.Team2)
+            {
+                ns.TpPlayer(LocalSceneObjects.singleton.TeamBSpawn.position);
+            }
+
+            ph.PlayerKilled = false;
+            ph.Health = 100;
+            ph.GetComponent<OnlineShooting>().HitBoxes.ToList().ForEach(delegate (HitBox hb)
+            {
+                hb.GetComponent<MeshCollider>().enabled = true;
+            });
+            ph.RpcRespawnPlayer();
         }
     }
 
@@ -127,6 +154,9 @@ public class PlayerHealth : NetworkBehaviour
             PlayerList pl = GetComponent<PlayerList>();
             pl.CurrentPlayer = pl.players.FindIndex(x => x.Name == GetComponent<PlayerStats>().Nick);
             pl.UpdateCam();
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         else
         {

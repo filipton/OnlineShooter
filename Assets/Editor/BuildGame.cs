@@ -63,6 +63,8 @@ public class BuildGame : EditorWindow
 
         if (GUI.Button(new Rect(75, 0, 150, 50), "BUILD & DEPLOY"))
         {
+            PlayerSettings.bundleVersion = $"{x}.{y}.{z}.{w}";
+
             if (buildLin)
             {
                 BuildLinuxServer();

@@ -1,6 +1,8 @@
 ﻿using Mirror;
+using Mirror.Websocket;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public enum Team
@@ -33,7 +35,7 @@ public class PlayerStats : NetworkBehaviour
         if (isLocalPlayer)
         {
             CustomNetworkManager cnm = FindObjectOfType<CustomNetworkManager>();
-            CmdSetNick(cnm.LocalNick);
+            CmdSetNick(cnm.LocalNick, Application.version);
         }
         if (isServer)
             AutoSelectTeam();
@@ -50,12 +52,10 @@ public class PlayerStats : NetworkBehaviour
             if(ps.PlayerTeam == Team.Team1)
             {
                 Team1P += 1;
-                print("T1");
             }
             else if (ps.PlayerTeam == Team.Team2)
             {
                 Team2P += 1;
-                print("T2");
             }
         }
 
@@ -98,16 +98,68 @@ public class PlayerStats : NetworkBehaviour
     }
 
     [Command]
-    public void CmdSetNick(string nick)
+    public void CmdSetNick(string nick, string version)
     {
-        if(Nick == string.Empty)
+        if(Nick == string.Empty && !string.IsNullOrEmpty(nick) && !string.IsNullOrEmpty(version))
         {
-            if (nick.Length < 1)
+            int vCont = ServerVsClientVersion(version, Application.version);
+            print(vCont);
+            if (vCont != 0)
             {
-                nick = $"NG{GetComponent<NetworkIdentity>().netId}";
+                //TODO: Show Kick Message To Client
+                print(VersionKickMessage(vCont));
+
+                //Kick player (Disconnect)
+                GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
             }
 
             Nick = nick;
         }
+        else
+        {
+            GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
+        }
+    }
+
+    public int ServerVsClientVersion(string cV, string sV)
+    {
+        try
+        {
+            string[] cVs = cV.Split('.');
+            string[] sVs = sV.Split('.');
+
+            for (int i = 0; i < cVs.Length; i++)
+            {
+                int a = int.Parse(sVs[i]);
+                int b = int.Parse(cVs[i]);
+
+                if (a > b)
+                {
+                    //client outdated
+                    return -1;
+                }
+                else if (a < b)
+                {
+                    //server outdated
+                    return 1;
+                }
+            }
+        }
+        catch { return -1; }
+
+        return 0;
+    }
+
+    public string VersionKickMessage(int VersionControl)
+    {
+        switch (VersionControl)
+        {
+            case -1:
+                return "CLIENT OUTDATED";
+            case 1:
+                return "SERVER OUTDATED";
+        }
+
+        return string.Empty;
     }
 }
