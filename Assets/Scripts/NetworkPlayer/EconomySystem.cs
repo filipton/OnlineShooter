@@ -11,21 +11,6 @@ public class EconomySystem : NetworkBehaviour
 
     public SyncWeapons PlayerWeapons;
 
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        if (isLocalPlayer)
-        {
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                CmdBuyWeapon((Weapon)Random.Range(0, 3));
-            }
-        }
-    }
 
     [Command]
     public void CmdBuyWeapon(Weapon w)

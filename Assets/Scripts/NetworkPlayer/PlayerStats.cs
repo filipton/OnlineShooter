@@ -106,11 +106,7 @@ public class PlayerStats : NetworkBehaviour
             print(vCont);
             if (vCont != 0)
             {
-                //TODO: Show Kick Message To Client
-                print(VersionKickMessage(vCont));
-
-                //Kick player (Disconnect)
-                GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
+                StartCoroutine(KickPlayer($"Kicked from server: {VersionKickMessage(vCont)}."));
             }
 
             Nick = nick;
@@ -119,6 +115,26 @@ public class PlayerStats : NetworkBehaviour
         {
             GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
         }
+    }
+
+    [ServerCallback]
+    public void KickPlayerWithMsg(string msg)
+    {
+        StartCoroutine(KickPlayer(msg));
+    }
+
+    [TargetRpc]
+    public void TargetRpcKickPlayerMsg(NetworkConnection conn, string desc)
+    {
+        SMessageBox.singleton.ShowMessageBox("Disconected", desc);
+    }
+
+    [ServerCallback]
+    IEnumerator KickPlayer(string desc)
+    {
+        TargetRpcKickPlayerMsg(GetComponent<NetworkIdentity>().connectionToClient, desc);
+        yield return new WaitForSeconds(0.1f);
+        GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
     }
 
     public int ServerVsClientVersion(string cV, string sV)
