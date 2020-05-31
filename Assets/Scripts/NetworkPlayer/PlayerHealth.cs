@@ -58,10 +58,13 @@ public class PlayerHealth : NetworkBehaviour
             {
                 hb.GetComponent<MeshCollider>().enabled = false;
             });
+
             Health = 0;
             PlayerKilled = true;
             RpcKillPlayer();
             PlayerStats ps = GetComponent<PlayerStats>();
+
+            RpcKillFeed(ps.Nick, damagingPlayer.Nick, damagingPlayer.GetComponent<WeaponController>().CurrentWeapon);
 
             ps.Deaths += 1;
             ps.AddMoney(300);
@@ -69,6 +72,14 @@ public class PlayerHealth : NetworkBehaviour
             damagingPlayer.AddMoney(1000);
             RoundController.singleton.CheckIfAnyTeamWin();
         }
+    }
+
+    [ClientRpc]
+    public void RpcKillFeed(string player1, string player2, Weapon w)
+    {
+        GameObject kf = Instantiate(LocalSceneObjects.singleton.KF_Prefab, LocalSceneObjects.singleton.KF_Parent.transform);
+        kf.GetComponentInChildren<TextMeshProUGUI>().text = $"{player1} ︻╦╤─ {player2}";
+        Destroy(kf, 5f);
     }
 
     [Command]

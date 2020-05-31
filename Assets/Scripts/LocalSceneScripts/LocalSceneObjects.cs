@@ -17,6 +17,10 @@ public class LocalSceneObjects : MonoBehaviour
     public GameObject Team2;
     public TextMeshProUGUI RoundsText;
 
+    [Header("KillFeed")]
+    public GameObject KF_Parent;
+    public GameObject KF_Prefab;
+
     [Header("Team Spawn Points")]
     public Transform TeamASpawn;
     public Transform TeamBSpawn;

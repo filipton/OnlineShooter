@@ -63,8 +63,7 @@ public class RemoteConsole : MonoBehaviour
             ra = FindObjectsOfType<RemoteAdmin>().ToList().Find(x => x.isLocalPlayer);
         }
 
-        string[] cmds = tMP_InputField.text.Split(' ');
-        ra.CmdSendCmd(cmds[0], cmds[1], cmds[2]);
+        ra.CmdSendCmd(tMP_InputField.text);
     }
 
     /// <summary>

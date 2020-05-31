@@ -21,6 +21,7 @@ public class PlayerMouseLook : MonoBehaviour
     float minimumY = -90F;
     float maximumY = 90F;
 
+    public bool OverwatchCam = false;
     bool Esc;
 
     void Start()
@@ -48,8 +49,15 @@ public class PlayerMouseLook : MonoBehaviour
             Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
             Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, -Vector3.right);
 
-            transform.localRotation = yQuaternion;
-            playerBody.localRotation = xQuaternion;
+            if (!OverwatchCam)
+            {
+                transform.localRotation = yQuaternion;
+                playerBody.localRotation = xQuaternion;
+            }
+            else
+            {
+                transform.localRotation = xQuaternion * yQuaternion;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))

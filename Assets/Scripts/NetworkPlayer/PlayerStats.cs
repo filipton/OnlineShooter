@@ -36,6 +36,7 @@ public class PlayerStats : NetworkBehaviour
         {
             CustomNetworkManager cnm = FindObjectOfType<CustomNetworkManager>();
             CmdSetNick(cnm.LocalNick, Application.version);
+            GetComponent<OverwatchPlayer>().StartOverWatch();
         }
         if (isServer)
             AutoSelectTeam();
@@ -103,7 +104,6 @@ public class PlayerStats : NetworkBehaviour
         if(Nick == string.Empty && !string.IsNullOrEmpty(nick) && !string.IsNullOrEmpty(version))
         {
             int vCont = ServerVsClientVersion(version, Application.version);
-            print(vCont);
             if (vCont != 0)
             {
                 StartCoroutine(KickPlayer($"Kicked from server: {VersionKickMessage(vCont)}."));

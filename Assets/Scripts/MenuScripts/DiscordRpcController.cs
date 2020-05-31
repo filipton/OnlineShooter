@@ -65,14 +65,10 @@ public class DiscordRpcController : MonoBehaviour
 		var lobbyManager = discord.GetLobbyManager();
 		activityManager.OnActivityJoin += secret =>
 		{
-			print($"OnJoin {secret}");
 			lobbyManager.ConnectLobbyWithActivitySecret(secret, (Discord.Result result, ref Discord.Lobby lobby) =>
 			{
-				print($"Connected to lobby: {lobby.Id}");
 				lobbyManager.ConnectNetwork(lobby.Id);
 				lobbyManager.OpenNetworkChannel(lobby.Id, 0, true);
-				print(lobbyManager.GetLobbyMetadataValue(lobby.Id, "ip"));
-				print(lobbyManager.GetLobbyMetadataValue(lobby.Id, "port"));
 
 				UpdateActivity(lobby);
 			});

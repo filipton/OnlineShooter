@@ -1,6 +1,7 @@
 ﻿using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class RemoteAdmin : NetworkBehaviour
@@ -8,41 +9,66 @@ public class RemoteAdmin : NetworkBehaviour
     public Dictionary<string, NetworkIdentity> PlayersIdentities = new Dictionary<string, NetworkIdentity>();
 
     [Command]
-    public void CmdSendCmd(string cmd, string Nick, string parms)
+    public void CmdSendCmd(string cmd)
     {
+        string ret = "Unknown command!";
+
         GetAllPlayers();
 
-        string ret = "Unknown command!";
-        if(PlayersIdentities.TryGetValue(Nick, out NetworkIdentity id))
+        List<string> args = new List<string>();
+        foreach (string arg in Regex.Split(cmd, "(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"))
         {
-            switch (cmd)
-            {
-                case "add-ammo":
-                    int count = int.Parse(parms);
-                    AmmoController ac = id.GetComponent<AmmoController>();
-                    WeaponController wc = id.GetComponent<WeaponController>();
-                    for (int i = 0; i < count; i++)
-                    {
-                        ac.GetAmmoMagazines(wc.CurrentAmmoType).Add(new AmmoMagazine(ac.MaxInMagazine));
-                    }
-                    ac.RefreshAllInPlayerAmmo();
-                    ret = $"{Nick} got {parms} ammo magazines! ({parms}x{WeaponStats.GetMaxMagazineSize(wc.CurrentAmmoType)} ammo)";
-                    break;
-                case "play-sound":
-                    id.GetComponent<AudioSync>().RpcSyncAudioClip(parms);
-                    ret = $"Played at position of {Nick} sound: {parms}";
-                    break;
-                case "add-money":
-                    int moneyCount = int.Parse(parms);
-                    PlayerStats ps = id.GetComponent<PlayerStats>();
-                    ps.AddMoney(moneyCount);
-                    ret = $"Player {Nick} got {moneyCount} money! Player money: {ps.Money}.";
-                    break;
-            }
+            args.Add(arg.Replace("\"", ""));
         }
-        else
+
+        if(args.Count > 0)
         {
-            ret = $"Player not found!";
+            NetworkIdentity id;
+            string Nick = string.Empty;
+
+            if (args[0] == "sudo")
+            {
+                Nick = args[2];
+                if (PlayersIdentities.TryGetValue(Nick, out id))
+                {
+                    switch (args[1])
+                    {
+                        case "add-ammo":
+                            int count = int.Parse(args[3]);
+                            AmmoController ac = id.GetComponent<AmmoController>();
+                            WeaponController wc = id.GetComponent<WeaponController>();
+                            for (int i = 0; i < count; i++)
+                            {
+                                ac.GetAmmoMagazines(wc.CurrentAmmoType).Add(new AmmoMagazine(ac.MaxInMagazine));
+                            }
+                            ac.RefreshAllInPlayerAmmo();
+                            ret = $"{Nick} got {args[3]} ammo magazines! ({args[3]}x{WeaponStats.GetMaxMagazineSize(wc.CurrentAmmoType)} ammo)";
+                            break;
+                        case "play-sound":
+                            id.GetComponent<AudioSync>().RpcSyncAudioClip(args[3]);
+                            ret = $"Played at position of {Nick} sound: {args[3]}";
+                            break;
+                        case "add-money":
+                            int moneyCount = int.Parse(args[3]);
+                            PlayerStats ps = id.GetComponent<PlayerStats>();
+                            ps.AddMoney(moneyCount);
+                            ret = $"Player {Nick} got {moneyCount} money! Player money: {ps.Money}.";
+                            break;
+                    }
+                }
+                else
+                {
+                    ret = "Player not found!";
+                }
+            }
+            else
+            {
+                Nick = args[1];
+                if (PlayersIdentities.TryGetValue(Nick, out id))
+                {
+                    //non sudo commands
+                }
+            }
         }
 
         TargetRpcCommandReturn(GetComponent<NetworkIdentity>().connectionToClient, ret);
