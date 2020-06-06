@@ -12,6 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/Maps/so_room.unity
-    guid: 25d4c1a4d8f5ed949a1a7db70121f6c8
+    path: Assets/Scenes/Maps/so_revolution.unity
+    guid: 10cd4b21f7125e844a65365443a23920
   m_configObjects: {}

@@ -208,6 +208,7 @@ GameObject:
   - component: {fileID: 23922048}
   - component: {fileID: 23922051}
   - component: {fileID: 23922052}
+  - component: {fileID: 23922053}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -393,6 +394,18 @@ MonoBehaviour:
   ButtonPrefab: {fileID: 2345974643634842823, guid: b25bb48f59264274fa2cc5fc15fa4982,
     type: 3}
   ListParent: {fileID: 350134769}
+--- !u!114 &23922053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23922047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9062994554d28d40bca399cda721a66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &175867787
 GameObject:
   m_ObjectHideFlags: 0
@@ -4886,7 +4899,7 @@ MonoBehaviour:
   showDebugMessages: 0
   serverTickRate: 128
   offlineScene: Assets/Scenes/Menu.unity
-  onlineScene: Assets/Scenes/Maps/so_room.unity
+  onlineScene: Assets/Scenes/Maps/so_revolution.unity
   transport: {fileID: 1569880154}
   networkAddress: localhost
   maxConnections: 20
