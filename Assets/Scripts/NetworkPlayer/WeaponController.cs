@@ -8,7 +8,11 @@ public enum Weapon
 {
     Knife,
     Defender,
-    Breaker
+    Breaker,
+    Kernel,
+    AWP,
+    Shotgun1,
+    Shotgun2
 }
 
 public enum AmmoType
@@ -30,8 +34,8 @@ public class WeaponController : NetworkBehaviour
     [SyncVar]
     public int CurrentSelectedWeaponIndex = 0;
 
-    public Material[] Mats = new Material[2];
-    public GameObject[] Weapons = new GameObject[2];
+    public GameObject[] FPC_WeaponModels;
+    public GameObject[] WeaponModels;
 
     public EconomySystem economySystem;
     public OnlineShooting onlineShooting;
@@ -68,7 +72,7 @@ public class WeaponController : NetworkBehaviour
             CurrentAmmoType = WeaponStats.GetAmmoType(w);
             ServerChangeWeapon(w, WeaponStats.GetAmmoType(w));
             ammoController.RefreshCurrentAmmoInMagazine();
-            RpcChangeWeaponColor(CurrentSelectedWeaponIndex);
+            RpcChangeWeaponModel(CurrentSelectedWeaponIndex);
         }
     }
 
@@ -83,30 +87,20 @@ public class WeaponController : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcChangeWeaponColor(int ind)
+    public void RpcChangeWeaponModel(int ind)
     {
-        Material m = Mats[0];
-        Weapon currW = economySystem.PlayerWeapons[ind];
-        switch (currW)
+        foreach(GameObject gb in FPC_WeaponModels)
+		{
+            gb.SetActive(false);
+		}
+        foreach (GameObject gb in WeaponModels)
         {
-            case Weapon.Defender:
-                m = Mats[0];
-                break;
-            case Weapon.Breaker:
-                m = Mats[1];
-                break;
-            case Weapon.Knife:
-                m = null;
-                break;
+            gb.SetActive(false);
+        }
 
-        }
-        foreach(GameObject gb in Weapons)
-        {
-            foreach (MeshRenderer mesh in gb.GetComponentsInChildren<MeshRenderer>())
-            {
-                mesh.material = m;
-            }
-        }
+        Weapon currW = economySystem.PlayerWeapons[ind];
+        FPC_WeaponModels[(int)currW].SetActive(true);
+        WeaponModels[(int)currW].SetActive(true);
     }
 
     private void OnValidate()
@@ -130,7 +124,15 @@ public class WeaponStats
             case Weapon.Breaker:
                 return 0.1f;
             case Weapon.Knife:
-                return 0.5f;
+                return 0.35f;
+            case Weapon.Kernel:
+                return 0.25f;
+            case Weapon.AWP:
+                return 0.95f;
+            case Weapon.Shotgun1:
+                return 0.416f;
+            case Weapon.Shotgun2:
+                return 0.585f;
         }
 
         return 100;
@@ -163,6 +165,14 @@ public class WeaponStats
                 return 0.85f;
             case Weapon.Knife:
                 return 2;
+            case Weapon.Kernel:
+                return 0.95f;
+            case Weapon.AWP:
+                return 4;
+            case Weapon.Shotgun1:
+                return 1.25f;
+            case Weapon.Shotgun2:
+                return 0.85f;
         }
 
         return 0;
@@ -178,6 +188,14 @@ public class WeaponStats
                 return 2900;
             case Weapon.Knife:
                 return 100;
+            case Weapon.Kernel:
+                return 400;
+            case Weapon.AWP:
+                return 4750;
+            case Weapon.Shotgun1:
+                return 2000;
+            case Weapon.Shotgun2:
+                return 2250;
         }
 
         return 0;
@@ -193,9 +211,40 @@ public class WeaponStats
                 return AmmoType.Light;
             case Weapon.Knife:
                 return AmmoType.KnifeAmmo;
+            case Weapon.Kernel:
+                return AmmoType.Light;
+            case Weapon.AWP:
+                return AmmoType.Heavy;
+            case Weapon.Shotgun1:
+                return AmmoType.Light;
+            case Weapon.Shotgun2:
+                return AmmoType.Light;
         }
 
         return 0;
+    }
+
+    public static bool GetWeaponFullAuto(Weapon w)
+    {
+        switch (w)
+        {
+            case Weapon.Defender:
+                return true;
+            case Weapon.Breaker:
+                return true;
+            case Weapon.Knife:
+                return false;
+            case Weapon.Kernel:
+                return false;
+            case Weapon.AWP:
+                return false;
+            case Weapon.Shotgun1:
+                return false;
+            case Weapon.Shotgun2:
+                return false;
+        }
+
+        return false;
     }
 
     public static float GetMaxDistance(Weapon w)
@@ -203,7 +252,9 @@ public class WeaponStats
         switch (w)
         {
             case Weapon.Knife:
-                return 1f;
+                return 2f;
+            case Weapon.Shotgun1:
+                return 40f;
         }
 
         return 250;

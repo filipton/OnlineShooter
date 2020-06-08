@@ -67,6 +67,9 @@ public class PlayerMovement : NetworkBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;
 
+        if (move.magnitude > 1)
+            move = move.normalized;
+
         characterController.Move(move * speed * Time.deltaTime);
 
         if (Input.GetButtonDown("Jump") && isGrounded)

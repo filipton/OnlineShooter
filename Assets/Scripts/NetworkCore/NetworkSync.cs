@@ -9,13 +9,11 @@ public class NetworkSync : NetworkBehaviour
     [Range(0, 0.5f)]
     public float Interval;
 
-    public NetworkIdentity Nid;
+    NetworkIdentity Nid;
     public Camera cam;
 
     public float MovementThresholdXZ = 0.400002f;
     public float MovementThresholdY = 0.55f;
-    public float MaxXZ;
-    public float MaxY;
 
     Vector3 old_position;
 
@@ -29,7 +27,7 @@ public class NetworkSync : NetworkBehaviour
     }
 
     [Command]
-    public void CmdMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot, NetworkIdentity nid)
+    public void CmdMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot)
     {
         if (old_position == null)
         {
@@ -42,34 +40,25 @@ public class NetworkSync : NetworkBehaviour
                 float xzdistspeed = (new Vector2(pos.x, pos.z) - new Vector2(old_position.x, old_position.z)).magnitude;
                 float ydistspeed = Mathf.Abs(pos.y - old_position.y);
 
-                if (xzdistspeed > MaxXZ)
-                {
-                    MaxXZ = xzdistspeed;
-                }
-                if (ydistspeed > MaxY)
-                {
-                    MaxY = ydistspeed;
-                }
-
                 if (xzdistspeed > MovementThresholdXZ || ydistspeed > MovementThresholdY)
                 {
                     pos = old_position;
-                    TargetRpcMoveBackPlayer(this.GetComponent<NetworkIdentity>().connectionToClient, pos);
+                    TargetRpcMoveBackPlayer(Nid.connectionToClient, pos);
                 }
                 old_position = pos;
             }
         }
 
-        RpcMovePlayer(pos, rot, camRot, nid);
+        RpcMovePlayer(pos, rot, camRot);
         transform.position = pos;
         transform.rotation = rot;
         cam.transform.rotation = camRot;
     }
 
     [ClientRpc]
-    public void RpcMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot, NetworkIdentity nid)
+    public void RpcMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot)
     {
-        if (Nid != nid)
+        if (!isLocalPlayer)
         {
             transform.position = pos;
             transform.rotation = rot;
@@ -101,7 +90,7 @@ public class NetworkSync : NetworkBehaviour
     {
         while (true)
         {
-            CmdMovePlayer(transform.position, transform.rotation, cam.transform.rotation, Nid);
+            CmdMovePlayer(transform.position, transform.rotation, cam.transform.rotation);
             yield return new WaitForSeconds(Interval);
         }
     }

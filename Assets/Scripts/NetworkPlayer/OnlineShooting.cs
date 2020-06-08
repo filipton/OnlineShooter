@@ -32,6 +32,8 @@ public class OnlineShooting : NetworkBehaviour
     float LerpTime = -1;
     float RememberY = 0;
 
+    bool CanShoot = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,17 +52,25 @@ public class OnlineShooting : NetworkBehaviour
             {
                 LerpTime = -1;
                 RememberY = pml.rotationY;
+                CanShoot = true;
             }
-            if(Input.GetKey(KeyCode.Mouse0) && NextTimeP <= 0 && ammo.CurrentInMagazine > 0)
+            if(Input.GetKey(KeyCode.Mouse0) && NextTimeP <= 0 && ammo.CurrentInMagazine > 0 && CanShoot)
             {
                 CmdShoot();
                 As.CmdSyncAudioClip("AkShot");
                 NextTimeP = ShootRate;
                 pml.rotationY += 1.5f;
+
+                if (!WeaponStats.GetWeaponFullAuto(weaponController.CurrentWeapon))
+                {
+                    LerpTime = 0;
+                    CanShoot = false;
+                }
             }
             if (Input.GetKeyUp(KeyCode.Mouse0))
             {
                 LerpTime = 0;
+                CanShoot = false;
             }
 
             if (Mathf.Abs(pml.rotationY - RememberY) <= 22.5f && LerpTime > -1 && LerpTime < 1 && pml.CanRotateYAxis)
