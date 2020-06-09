@@ -89,7 +89,7 @@ public class OnlineShooting : NetworkBehaviour
             ServerTime();
         }
 
-        if (isClient && NextTimeP > 0)
+        if (!isServer && isClient && NextTimeP > 0)
         {
             NextTimeP -= Time.deltaTime;
         }

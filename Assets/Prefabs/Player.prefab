@@ -1457,8 +1457,6 @@ MonoBehaviour:
   cam: {fileID: 5786514638354079215}
   MovementThresholdXZ: 0.3
   MovementThresholdY: 0.31
-  MaxXZ: 0
-  MaxY: 0
 --- !u!114 &5786514638354078800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1670,9 +1668,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  Distance: 100
   PlantingTime: 3
+  m_plantingTime: 0
   BombExplosionTime: 30
+  m_bombExplosionTime: 0
   DefusingTime: 7
+  m_defusingTime: 0
   IsPlanting: 0
   IsExploding: 0
   IsDefusing: 0

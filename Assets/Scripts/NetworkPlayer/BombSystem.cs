@@ -1,32 +1,35 @@
 ﻿using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BombSystem : NetworkBehaviour
 {
+    public float Distance = 100f;
+
     public float PlantingTime = 3f;
-    float m_plantingTime;
+    [SyncVar]
+    public float m_plantingTime;
 
     public float BombExplosionTime = 30f;
-    float m_bombExplosionTime;
+    [SyncVar]
+    public float m_bombExplosionTime;
 
     public float DefusingTime = 7f;
-    float m_defusingTime;
+    [SyncVar]
+    public float m_defusingTime;
 
+    [SyncVar]
     public bool IsPlanting = false;
+    [SyncVar]
     public bool IsExploding = false;
+    [SyncVar]
     public bool IsDefusing = false;
 
+    Vector3 bomb_pos;
     NetworkIdentity nid;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
 		if (isServer)
@@ -39,6 +42,8 @@ public class BombSystem : NetworkBehaviour
                 {
                     IsPlanting = false;
                     m_plantingTime = 0f;
+
+                    bomb_pos = nid.transform.position;
 
                     if (nid == null)
                     {
@@ -58,7 +63,17 @@ public class BombSystem : NetworkBehaviour
                     IsExploding = false;
                     m_bombExplosionTime = 0f;
 
-                    print("EXPLODED!");
+                    foreach(PlayerHealth ph in FindObjectsOfType<PlayerHealth>())
+					{
+                        float BombDmg = 200;
+                        float dist = (bomb_pos - ph.transform.position).magnitude;
+
+                        BombDmg /= dist / 10;
+                        BombDmg *= 5;
+
+                        print((int)BombDmg);
+                        ph.CmdRemoveHealth((int)BombDmg, ph.GetComponent<PlayerStats>());
+                    }
 				}
 			}
 			if (IsDefusing)

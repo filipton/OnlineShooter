@@ -10,6 +10,7 @@ public class NetworkSync : NetworkBehaviour
     public float Interval;
 
     NetworkIdentity Nid;
+    PlayerMouseLook pml;
     public Camera cam;
 
     public float MovementThresholdXZ = 0.400002f;
@@ -22,12 +23,13 @@ public class NetworkSync : NetworkBehaviour
         if (isLocalPlayer)
         {
             Nid = GetComponent<NetworkIdentity>();
+            pml = cam.GetComponent<PlayerMouseLook>();
             StartCoroutine(SyncMovement());
         }
     }
 
     [Command]
-    public void CmdMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot)
+    public void CmdMovePlayer(Vector3 pos, sbyte xRot, short yRot)
     {
         if (old_position == null)
         {
@@ -49,20 +51,23 @@ public class NetworkSync : NetworkBehaviour
             }
         }
 
-        RpcMovePlayer(pos, rot, camRot);
-        transform.position = pos;
-        transform.rotation = rot;
-        cam.transform.rotation = camRot;
+        RpcMovePlayer(pos, xRot, yRot);
+        if (isServer && !isClient && !isLocalPlayer)
+        {
+            transform.position = pos;
+            transform.rotation = Quaternion.Euler(0, yRot, 0);
+            cam.transform.rotation = Quaternion.Euler(xRot, 0, 0);
+        }
     }
 
     [ClientRpc]
-    public void RpcMovePlayer(Vector3 pos, Quaternion rot, Quaternion camRot)
+    public void RpcMovePlayer(Vector3 pos, sbyte xRot, short yRot)
     {
         if (!isLocalPlayer)
         {
             transform.position = pos;
-            transform.rotation = rot;
-            cam.transform.rotation = camRot;
+            cam.transform.localRotation = Quaternion.AngleAxis(xRot, -Vector3.right);
+            transform.rotation = Quaternion.Euler(0, yRot, 0);
         }
     }
 
@@ -90,7 +95,7 @@ public class NetworkSync : NetworkBehaviour
     {
         while (true)
         {
-            CmdMovePlayer(transform.position, transform.rotation, cam.transform.rotation);
+            CmdMovePlayer(transform.position, (sbyte)pml.rotationY, (short)transform.rotation.eulerAngles.y);
             yield return new WaitForSeconds(Interval);
         }
     }
