@@ -56,7 +56,7 @@ public class NetworkSync : NetworkBehaviour
         {
             transform.position = pos;
             transform.rotation = Quaternion.Euler(0, yRot, 0);
-            cam.transform.rotation = Quaternion.Euler(xRot, 0, 0);
+            cam.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
         }
     }
 

@@ -108,81 +108,114 @@ public class OnlineShooting : NetworkBehaviour
         //pos += origin * 0.4f;
         if(NextTimeP <= 0 && ammo.CurrentInMagazine > 0)
         {
-            //RaycastHit[] hits = Physics.RaycastAll(pos, origin);
-            RaycastHit[] hits = RaycastAllSort(cam.transform.position, cam.transform.forward);
-            List<RaycastHit> FiltredHits = hits.ToList();
+            if(weaponController.CurrentWeapon != Weapon.Knife)
+			{
+                //RaycastHit[] hits = Physics.RaycastAll(pos, origin);
+                RaycastHit[] hits = RaycastAllSort(cam.transform.position, cam.transform.forward);
+                List<RaycastHit> FiltredHits = hits.ToList();
 
-            if(hits.Length > 0)
-            {
-                foreach(RaycastHit hit in hits)
+                if (hits.Length > 0)
                 {
-                    if (hit.transform.gameObject.CompareTag("HitBox") && hit.transform.gameObject.GetComponent<HitBox>().plyHealth.gameObject == gameObject)
+                    foreach (RaycastHit hit in hits)
                     {
-                        FiltredHits.Remove(hit);
-                    }
-                }
-
-                float BulletInpact = 1;
-
-                for (int i = 0; i < FiltredHits.Count; i++)
-                {
-                    if(BulletInpact > 0)
-                    {
-                        if (FiltredHits[i].transform.gameObject.CompareTag("HitBox"))
+                        if (hit.transform.gameObject.CompareTag("HitBox") && hit.transform.gameObject.GetComponent<HitBox>().plyHealth.gameObject == gameObject)
                         {
-                            if (BulletInpact >= DamagePlayerScanThreshold && FiltredHits[i].distance <= WeaponStats.GetMaxDistance(weaponController.CurrentWeapon))
+                            FiltredHits.Remove(hit);
+                        }
+                    }
+
+                    float BulletInpact = 1;
+
+                    for (int i = 0; i < FiltredHits.Count; i++)
+                    {
+                        if (BulletInpact > 0)
+                        {
+                            if (FiltredHits[i].transform.gameObject.CompareTag("HitBox"))
                             {
-                                HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
-                                hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact * DamageMultiplier), GetComponent<PlayerStats>());
-                                if(hitB.plyHealth.Health > 0)
+                                if (BulletInpact >= DamagePlayerScanThreshold && FiltredHits[i].distance <= WeaponStats.GetMaxDistance(weaponController.CurrentWeapon))
                                 {
-                                    As.RpcSyncAudioClip("death-sound");
+                                    HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
+                                    hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact * DamageMultiplier), GetComponent<PlayerStats>());
+                                    if (hitB.plyHealth.Health > 0)
+                                    {
+                                        As.RpcSyncAudioClip("death-sound");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (FiltredHits[i].transform.gameObject.layer != LayerMask.NameToLayer("Player") && BulletInpact >= CreateBulletScanThreshold)
+                                {
+                                    RpcCreateBulletHole(FiltredHits[i].point, Quaternion.FromToRotation(Vector3.up, FiltredHits[i].normal));
+                                }
+                            }
+
+                            //scan calculator
+                            ScanableObject so = FiltredHits[i].transform.GetComponent<ScanableObject>();
+                            if (so == null)
+                            {
+                                BulletInpact *= 1;
+                            }
+                            else
+                            {
+                                BulletInpact *= so.Scanable ? so.ScanMultiplier : 0;
+                            }
+
+                            MeshRenderer pbm = FiltredHits[i].transform.GetComponent<MeshRenderer>();
+                            if (pbm != null)
+                            {
+                                Vector3 hitNormal = FiltredHits[i].normal;
+
+                                //side "X"
+                                if (hitNormal.x != 0)
+                                {
+                                    BulletInpact /= pbm.bounds.size.x * 2;
+                                }
+
+                                //side "Y"
+                                if (hitNormal.y != 0)
+                                {
+                                    BulletInpact /= pbm.bounds.size.y * 2;
+                                }
+
+                                //side "Z"
+                                if (hitNormal.z != 0)
+                                {
+                                    BulletInpact /= pbm.bounds.size.z * 2;
                                 }
                             }
                         }
-                        else
+                    }
+                }
+            }
+			else
+			{
+                float thickness = 1f;
+                Vector3 origin = transform.position + new Vector3(0, 0.6f, 0) + transform.forward;
+                Vector3 direction = transform.TransformDirection(Vector3.forward);
+
+                RaycastHit[] hits = Physics.SphereCastAll(origin, thickness, direction, WeaponStats.GetMaxDistance(Weapon.Knife)).OrderBy(x => x.distance).ToArray();
+                List<RaycastHit> FiltredHits = hits.ToList();
+
+                if (hits.Length > 0)
+                {
+                    foreach (RaycastHit hit in hits)
+                    {
+                        if (hit.transform.gameObject.CompareTag("HitBox") && hit.transform.GetComponent<HitBox>().plyHealth.gameObject == gameObject)
                         {
-                            if (FiltredHits[i].transform.gameObject.layer != LayerMask.NameToLayer("Player") && BulletInpact >= CreateBulletScanThreshold)
-                            {
-                                RpcCreateBulletHole(FiltredHits[i].point, Quaternion.FromToRotation(Vector3.up, FiltredHits[i].normal));
-                            }
-                        }
-
-                        //scan calculator
-                        ScanableObject so = FiltredHits[i].transform.GetComponent<ScanableObject>();
-                        if (so == null)
-                        {
-                            BulletInpact *= 1;
-                        }
-                        else
-                        {
-                            BulletInpact *= so.Scanable ? so.ScanMultiplier : 0;
-                        }
-
-                        MeshRenderer pbm = FiltredHits[i].transform.GetComponent<MeshRenderer>();
-                        if (pbm != null)
-                        {
-                            Vector3 hitNormal = FiltredHits[i].normal;
-
-                            //side "X"
-                            if (hitNormal.x != 0)
-                            {
-                                BulletInpact /= pbm.bounds.size.x * 2;
-                            }
-
-                            //side "Y"
-                            if (hitNormal.y != 0)
-                            {
-                                BulletInpact /= pbm.bounds.size.y * 2;
-                            }
-
-                            //side "Z"
-                            if (hitNormal.z != 0)
-                            {
-                                BulletInpact /= pbm.bounds.size.z * 2;
-                            }
+                            FiltredHits.Remove(hit);
                         }
                     }
+
+                    HitBox hitB = FiltredHits[0].transform.GetComponent<HitBox>();
+                    if(hitB != null)
+					{
+                        hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * DamageMultiplier), GetComponent<PlayerStats>());
+                        if (hitB.plyHealth.Health > 0)
+                        {
+                            As.RpcSyncAudioClip("death-sound");
+                        }
+					}
                 }
             }
 
