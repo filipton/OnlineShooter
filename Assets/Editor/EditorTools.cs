@@ -29,6 +29,7 @@ public class CEditorTools : EditorWindow
 		{
             if (GUI.Button(new Rect(new Vector2(0, (i+1)*30), new Vector2(425, 30)), scenes[i]))
             {
+                EditorApplication.ExecuteMenuItem("File/Save");
                 EditorSceneManager.OpenScene(scenes[i]);
             }
         }
