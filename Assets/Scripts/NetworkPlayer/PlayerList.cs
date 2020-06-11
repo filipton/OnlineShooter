@@ -29,6 +29,8 @@ public class PlayerList : NetworkBehaviour
     public PlayerHealth ph;
     public PlayerStats ps;
 
+    public GameObject PlayerIconOnMap;
+
     public GameObject PlayerTabStatsText;
 
     [SyncVar]

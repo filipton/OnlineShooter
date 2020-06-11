@@ -79,7 +79,7 @@ public class PlayerHealth : NetworkBehaviour
     public void RpcKillFeed(string player1, string player2, Weapon w)
     {
         GameObject kf = Instantiate(LocalSceneObjects.singleton.KF_Prefab, LocalSceneObjects.singleton.KF_Parent.transform);
-        kf.GetComponentInChildren<TextMeshProUGUI>().text = $"{player1} ︻╦╤─ {player2}";
+        kf.GetComponentInChildren<TextMeshProUGUI>().text = $"{player2} ︻╦╤─ {player1}";
         Destroy(kf, 5f);
     }
 

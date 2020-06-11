@@ -39,6 +39,10 @@ public class CEditorTools : EditorWindow
         {
             EditorApplication.ExecuteMenuItem("File/Save");
         }
+        if (GUI.Button(new Rect(new Vector2(100, ((scenes.Length + 2) * 30)), new Vector2(100, 30)), "DESIGNER"))
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/Designer.unity");
+        }
         if (GUI.Button(new Rect(new Vector2(0, ((scenes.Length + 3) * 30)), new Vector2(100, 30)), "BUILD GUI"))
 		{
             EditorApplication.ExecuteMenuItem("Build/Build And Deploy GUI");

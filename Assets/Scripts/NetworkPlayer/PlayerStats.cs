@@ -14,36 +14,24 @@ public enum Team
 
 public class PlayerStats : NetworkBehaviour
 {
-    [SyncVar]
-    public string Nick;
+    [SyncVar] public string Nick;
 
     public string _token;
 
-    [SyncVar]
-    public int Kills;
-    [SyncVar]
-    public int Deaths;
+    [SyncVar] public int Kills;
+    [SyncVar] public int Deaths;
     //[SyncVar]
     //public int Assists;
-
-    [SyncVar]
-    public int Money = 800;
-
-    [SyncVar]
-    public Team PlayerTeam;
+    [SyncVar] public int Money = 800;
+    [SyncVar] public Team PlayerTeam;
 
     private void Start()
     {
-        if (isLocalPlayer)
-        {
-            CustomNetworkManager cnm = FindObjectOfType<CustomNetworkManager>();
-            GetComponent<OverwatchPlayer>().StartOverWatch();
-        }
-        if (isServer)
-            AutoSelectTeam();
+        if (isLocalPlayer) GetComponent<OverwatchPlayer>().StartOverWatch();
+        if (isServer) AutoSelectTeam();
     }
 
-    [ServerCallback]
+	[ServerCallback]
     void AutoSelectTeam()
     {
         int Team1P = 0;
@@ -79,6 +67,21 @@ public class PlayerStats : NetworkBehaviour
         {
             ns.TpPlayer(LocalSceneObjects.singleton.TeamBSpawn.position);
         }
+
+        foreach (PlayerStats ps in FindObjectsOfType<PlayerStats>())
+        {
+            if(ps.PlayerTeam != Team.WithoutTeam && PlayerTeam == ps.PlayerTeam)
+			{
+                TargetRpcSetMapIcons(netIdentity.connectionToClient, ps.netIdentity);
+                TargetRpcSetMapIcons(ps.netIdentity.connectionToClient, netIdentity);
+			}
+        }
+    }
+
+    [TargetRpc]
+    public void TargetRpcSetMapIcons(NetworkConnection conn, NetworkIdentity id)
+	{
+        id.gameObject.GetComponent<PlayerList>().PlayerIconOnMap.SetActive(true);
     }
 
     [ServerCallback]
@@ -100,10 +103,7 @@ public class PlayerStats : NetworkBehaviour
     }
 
     [Command]
-    public void CmdSetNick(string nick)
-    {
-        SetNick(nick);
-    }
+    public void CmdSetNick(string nick) => SetNick(nick);
 
     [ServerCallback]
     public void SetNick(string nick)
@@ -119,16 +119,10 @@ public class PlayerStats : NetworkBehaviour
     }
 
     [ServerCallback]
-    public void KickPlayerWithMsg(string msg)
-    {
-        StartCoroutine(KickPlayer(msg));
-    }
+    public void KickPlayerWithMsg(string msg) => StartCoroutine(KickPlayer(msg));
 
     [TargetRpc]
-    public void TargetRpcKickPlayerMsg(NetworkConnection conn, string desc)
-    {
-        SMessageBox.singleton.ShowMessageBox("Disconected", desc);
-    }
+    public void TargetRpcKickPlayerMsg(NetworkConnection conn, string desc) => SMessageBox.singleton.ShowMessageBox("Disconected", desc);
 
     [ServerCallback]
     IEnumerator KickPlayer(string desc)

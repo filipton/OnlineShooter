@@ -61,7 +61,7 @@ public class LobbyManager : NetworkBehaviour
 	{
         PlayersCount = NetworkServer.connections.Count;
 
-        if (PlayersCount >= 2 && Y)
+        if (PlayersCount >= 1 && Y)
         {
             ReamingTime -= Time.deltaTime;
         }

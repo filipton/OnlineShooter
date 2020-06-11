@@ -8,7 +8,6 @@ TagManager:
   - SO
   - HitBox
   - HealthText
-  - RespawnButton
   - AmmoText
   layers:
   - Default
@@ -23,8 +22,8 @@ TagManager:
   - Player
   - HitBox
   - AmmoBox
-  - 
-  - 
+  - Map
+  - MapTextures
   - 
   - 
   - 
