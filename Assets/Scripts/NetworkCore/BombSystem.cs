@@ -54,6 +54,7 @@ public class BombSystem : NetworkBehaviour
                             bomb_pos = nid.transform.position;
                             bomb = Instantiate(BombPrefab);
                             bomb.transform.position = bomb_pos - new Vector3(0, 0.433f, 0);
+                            NetworkServer.Spawn(bomb);
 
                             TargetRpcTogglePlantBombInClient(nid.connectionToClient, false);
 
@@ -65,11 +66,11 @@ public class BombSystem : NetworkBehaviour
             else if (IsExploding)
 			{
                 m_bombExplosionTime += Time.deltaTime;
-                bomb.GetComponentInChildren<TextMeshPro>().text = (BombExplosionTime-m_bombExplosionTime).ToString("0");
 
                 if (m_bombExplosionTime >= BombExplosionTime)
 				{
-                    Destroy(bomb);
+                    NetworkServer.UnSpawn(bomb);
+                    NetworkServer.Destroy(bomb);
 
                     IsExploding = false;
                     m_bombExplosionTime = 0f;
@@ -103,7 +104,8 @@ public class BombSystem : NetworkBehaviour
                             IsExploding = false;
                             m_bombExplosionTime = 0f;
 
-                            Destroy(bomb);
+                            NetworkServer.UnSpawn(bomb);
+                            NetworkServer.Destroy(bomb);
 
                             TargetRpcTogglePlantBombInClient(nid.connectionToClient, false);
                         }
