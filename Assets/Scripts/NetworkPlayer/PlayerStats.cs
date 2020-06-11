@@ -17,6 +17,8 @@ public class PlayerStats : NetworkBehaviour
     [SyncVar]
     public string Nick;
 
+    public string _token;
+
     [SyncVar]
     public int Kills;
     [SyncVar]
@@ -35,7 +37,6 @@ public class PlayerStats : NetworkBehaviour
         if (isLocalPlayer)
         {
             CustomNetworkManager cnm = FindObjectOfType<CustomNetworkManager>();
-            CmdSetNick(cnm.LocalNick, Application.version);
             GetComponent<OverwatchPlayer>().StartOverWatch();
         }
         if (isServer)
@@ -99,16 +100,16 @@ public class PlayerStats : NetworkBehaviour
     }
 
     [Command]
-    public void CmdSetNick(string nick, string version)
+    public void CmdSetNick(string nick)
     {
-        if(Nick == string.Empty && !string.IsNullOrEmpty(nick) && !string.IsNullOrEmpty(version))
-        {
-            int vCont = ServerVsClientVersion(version, Application.version);
-            if (vCont != 0)
-            {
-                StartCoroutine(KickPlayer($"Kicked from server: {VersionKickMessage(vCont)}."));
-            }
+        SetNick(nick);
+    }
 
+    [ServerCallback]
+    public void SetNick(string nick)
+    {
+        if (Nick == string.Empty && !string.IsNullOrEmpty(nick))
+        {
             Nick = nick;
         }
         else
@@ -135,47 +136,5 @@ public class PlayerStats : NetworkBehaviour
         TargetRpcKickPlayerMsg(GetComponent<NetworkIdentity>().connectionToClient, desc);
         yield return new WaitForSeconds(0.1f);
         GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
-    }
-
-    public int ServerVsClientVersion(string cV, string sV)
-    {
-        try
-        {
-            string[] cVs = cV.Split('.');
-            string[] sVs = sV.Split('.');
-
-            for (int i = 0; i < cVs.Length; i++)
-            {
-                int a = int.Parse(sVs[i]);
-                int b = int.Parse(cVs[i]);
-
-                if (a > b)
-                {
-                    //client outdated
-                    return -1;
-                }
-                else if (a < b)
-                {
-                    //server outdated
-                    return 1;
-                }
-            }
-        }
-        catch { return -1; }
-
-        return 0;
-    }
-
-    public string VersionKickMessage(int VersionControl)
-    {
-        switch (VersionControl)
-        {
-            case -1:
-                return "CLIENT OUTDATED";
-            case 1:
-                return "SERVER OUTDATED";
-        }
-
-        return string.Empty;
     }
 }

@@ -56,7 +56,7 @@ public class NetworkSync : NetworkBehaviour
         {
             transform.position = pos;
             transform.rotation = Quaternion.Euler(0, yRot, 0);
-            cam.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
+            cam.transform.localRotation = Quaternion.AngleAxis(xRot, -Vector3.right);
         }
     }
 
@@ -95,7 +95,7 @@ public class NetworkSync : NetworkBehaviour
     {
         while (true)
         {
-            CmdMovePlayer(transform.position, (sbyte)(pml.rotationY*(-1)), (short)transform.rotation.eulerAngles.y);
+            CmdMovePlayer(transform.position, (sbyte)pml.rotationY, (short)transform.rotation.eulerAngles.y);
             yield return new WaitForSeconds(Interval);
         }
     }

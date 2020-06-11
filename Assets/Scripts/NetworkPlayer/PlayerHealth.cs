@@ -38,12 +38,13 @@ public class PlayerHealth : NetworkBehaviour
             if(healthText == null)
             {
                 healthText = GameObject.FindGameObjectWithTag("HealthText").GetComponent<TextMeshProUGUI>();
-                healthText.text = Health.ToString();
             }
-
-            if(healthText.text != Health.ToString())
-            {
-                healthText.text = Health.ToString();
+			else
+			{
+                if (healthText.text != Health.ToString())
+                {
+                    healthText.text = Health.ToString();
+                }
             }
         }
     }

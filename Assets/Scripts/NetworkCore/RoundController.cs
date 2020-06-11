@@ -115,10 +115,10 @@ public class RoundController : NetworkBehaviour
     {
         yield return new WaitForSeconds(time);
 
-        foreach(PlayerStats ps in FindObjectsOfType<PlayerStats>())
+        /*foreach(PlayerStats ps in FindObjectsOfType<PlayerStats>())
         {
             ps.KickPlayerWithMsg($"Server is restarting!");
-        }
+        }*/
 
         RoundController rc = FindObjectOfType<RoundController>();
         rc.Team1Wins = 0;
@@ -126,6 +126,6 @@ public class RoundController : NetworkBehaviour
 
         Destroy(rc.gameObject);
 
-        CustomNetworkManager.singleton.ServerChangeScene(SceneManager.GetActiveScene().name);
+        FindObjectOfType<CustomNetworkManager>().ServerChangeScene("Lobby");
     }
 }

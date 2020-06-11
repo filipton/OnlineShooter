@@ -42167,7 +42167,7 @@ GameObject:
   - component: {fileID: 1692071816}
   - component: {fileID: 1692071815}
   m_Layer: 0
-  m_Name: RoundController
+  m_Name: _Master
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42204,7 +42204,7 @@ MonoBehaviour:
   syncInterval: 0.1
   Team1Wins: 0
   Team2Wins: 0
-  WinRoundCount: 15
+  WinRoundCount: 7
 --- !u!4 &1692071817
 Transform:
   m_ObjectHideFlags: 0

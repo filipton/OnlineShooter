@@ -33,6 +33,7 @@ public class PlayerList : NetworkBehaviour
 
     [SyncVar]
     public int PlayersCount;
+    int m_pCount;
 
     public int CurrentPlayer = 0;
 
@@ -68,6 +69,12 @@ public class PlayerList : NetworkBehaviour
             else if (Input.GetKeyUp(KeyCode.Tab))
             {
                 LocalSceneObjects.singleton.TabPlayerStats.SetActive(false);
+            }
+
+            if(m_pCount != PlayersCount)
+			{
+                m_pCount = PlayersCount;
+                StartCoroutine(UpdatePlayerList());
             }
 
             //LocalSceneObjects.singleton.TabPlayerStats.SetActive(Input.GetKey(KeyCode.Tab));
@@ -129,8 +136,6 @@ public class PlayerList : NetworkBehaviour
 
     public void UpdateCam()
     {
-        UpdateList();
-
         CurrentPlayer = Mathf.Clamp(CurrentPlayer, 0, PlayersCount - 1);
 
         cam.enabled = false;

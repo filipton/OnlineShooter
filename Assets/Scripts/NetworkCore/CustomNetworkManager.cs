@@ -10,32 +10,13 @@ using UnityEngine.EventSystems;
 public class CustomNetworkManager : LiteNetLib4MirrorNetworkManager
 {
     [Header("Custom Varibles")]
-    public string LocalNick;
-    public Team LocalTeam;
     public LiteNetLib4MirrorTransport Transport;
 
-    public override void Awake()
-    {
-        base.Awake();
-        LocalNick = PlayerPrefs.GetString("nick");
-    }
-
-    public void SetNick(TMP_InputField tmp_if)
-    {
-        LocalNick = tmp_if.text;
-        PlayerPrefs.SetString("nick", tmp_if.text);
-    }
-
-    public void SetTeam(int TeamId)
-    {
-        LocalTeam = (Team)TeamId;
-    }
-
-    public override void OnServerConnect(NetworkConnection conn)
+	public override void OnServerConnect(NetworkConnection conn)
     {
         base.OnServerConnect(conn);
 
-        foreach(PlayerList pl in FindObjectsOfType<PlayerList>())
+        foreach (PlayerList pl in FindObjectsOfType<PlayerList>())
         {
             pl.RpcGetAllPlayers();
         }
@@ -57,4 +38,11 @@ public class CustomNetworkManager : LiteNetLib4MirrorNetworkManager
             ConnectToServerFromList(sinfo.serverInfo);
         }
     }
+
+    /*IEnumerator SpawnPlayer(NetworkConnection conn)
+	{
+        yield return new WaitForSeconds(0.1f);
+        GameObject player = Instantiate(LobbyPlayerPrefab);
+        NetworkServer.AddPlayerForConnection(conn, player);
+    }*/
 }

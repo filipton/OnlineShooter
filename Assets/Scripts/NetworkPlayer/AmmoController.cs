@@ -20,16 +20,14 @@ public class SyncAmmoMagazines : SyncList<AmmoMagazine> { }
 
 public class AmmoController : NetworkBehaviour
 {
-    [SyncVar]
-    public int MaxInMagazine = 30;
-    [SyncVar]
-    public int MaxMagazinesInPlayer = 5;
+    [SyncVar] public int MaxInMagazine = 30;
+    [SyncVar] public int MaxMagazinesInPlayer = 5;
 
-    [SyncVar]
-    public int InPlayer = 0;
+    [SyncVar] public int InPlayer = 0;
+    int m_inPlayer = 0;
+    int m_inMagazine = 0;
 
-    [SyncVar]
-    public int CurrentInMagazine;
+    [SyncVar] public int CurrentInMagazine;
 
     public WeaponController weaponController;
 
@@ -38,14 +36,10 @@ public class AmmoController : NetworkBehaviour
     public SyncAmmoMagazines RadioactiveAmmoMagazines = new SyncAmmoMagazines();
 
     [Header("CurrentMagazine Of Ammo Types")]
-    [SyncVar]
-    public AmmoMagazine CurrentKnifeDurability = new AmmoMagazine();
-    [SyncVar]
-    public AmmoMagazine CurrentHeavyAmmoMagazine = new AmmoMagazine();
-    [SyncVar]
-    public AmmoMagazine CurrentLightAmmoMagazine = new AmmoMagazine();
-    [SyncVar]
-    public AmmoMagazine CurrentRadiactiveAmmoMagazine = new AmmoMagazine();
+    [SyncVar] public AmmoMagazine CurrentKnifeDurability = new AmmoMagazine();
+    [SyncVar] public AmmoMagazine CurrentHeavyAmmoMagazine = new AmmoMagazine();
+    [SyncVar] public AmmoMagazine CurrentLightAmmoMagazine = new AmmoMagazine();
+    [SyncVar] public AmmoMagazine CurrentRadiactiveAmmoMagazine = new AmmoMagazine();
 
     public GameObject AmmoBoxPrefab;
 
@@ -75,7 +69,13 @@ public class AmmoController : NetworkBehaviour
             {
                 CmdReload();
             }
-            LocalSceneObjects.singleton.AmmoText.text = $"<color={(CurrentInMagazine < 6 ? "red" : "#51FF00")}>{CurrentInMagazine}</color> {(InPlayer > -1 ? $"<color=#FF3F00>/</color> <color={(InPlayer < MaxInMagazine ? "red" : "#51FF00")}>{InPlayer}</color>" : "")}";
+
+            if (m_inPlayer != InPlayer || m_inMagazine != CurrentInMagazine)
+            {
+                LocalSceneObjects.singleton.AmmoText.text = $"<color={(CurrentInMagazine < 6 ? "red" : "#51FF00")}>{CurrentInMagazine}</color> {(InPlayer > -1 ? $"<color=#FF3F00>/</color> <color={(InPlayer < MaxInMagazine ? "red" : "#51FF00")}>{InPlayer}</color>" : "")}";
+                m_inPlayer = InPlayer;
+                m_inMagazine = CurrentInMagazine;
+            }
         }
     }
 

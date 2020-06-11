@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SMessageBox : MonoBehaviour
 {
@@ -14,7 +15,9 @@ public class SMessageBox : MonoBehaviour
 
     private void Awake()
     {
-        if (singleton != null)
+		SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+
+        if (FindObjectsOfType<SMessageBox>().Length > 1)
             Destroy(gameObject);
 
         DontDestroyOnLoad(this);
@@ -22,7 +25,12 @@ public class SMessageBox : MonoBehaviour
         singleton = this;
     }
 
-    public void ShowMessageBox(string title, string description)
+	private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
+	{
+        singleton = this;
+	}
+
+	public void ShowMessageBox(string title, string description)
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
