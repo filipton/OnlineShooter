@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LocalSceneObjects : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class LocalSceneObjects : MonoBehaviour
     [Header("Scene Objecs")]
     public TextMeshProUGUI AmmoText;
     public GameObject SniperScope;
+    public RawImage HitMarker;
     
     [Header("Tab Player Stats")]
     public GameObject TabPlayerStats;

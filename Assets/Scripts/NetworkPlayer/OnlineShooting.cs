@@ -29,10 +29,19 @@ public class OnlineShooting : NetworkBehaviour
     public AmmoController ammo;
     public WeaponController weaponController;
 
+    //recoil
     float LerpTime = -1;
     float RememberY = 0;
 
+    //scope
     float NormalFov = 0;
+
+    //Hitmarker
+    bool hitMarkerEn;
+
+    float time = 0f;
+    float minimum = 0;
+    float maximum = 255;
 
     bool CanShoot = true;
 
@@ -87,16 +96,39 @@ public class OnlineShooting : NetworkBehaviour
                 CanShoot = false;
             }
 
-            //recoil back
-            if (Mathf.Abs(pml.rotationY - RememberY) <= 22.5f && LerpTime > -1 && LerpTime < 1 && pml.CanRotateYAxis)
-            {
-                LerpTime += Time.deltaTime;
-                pml.rotationY += Mathf.Lerp(pml.rotationY, RememberY, LerpTime) - pml.rotationY;
-            }
-            else if (!pml.CanRotateYAxis)
-            {
-                LerpTime = -1;
-            }
+			//recoil back
+			if (Mathf.Abs(pml.rotationY - RememberY) <= 22.5f && LerpTime > -1 && LerpTime < 1 && pml.CanRotateYAxis)
+			{
+				LerpTime += Time.deltaTime;
+				pml.rotationY += Mathf.Lerp(pml.rotationY, RememberY, LerpTime) - pml.rotationY;
+			}
+			else if (!pml.CanRotateYAxis)
+			{
+				LerpTime = -1;
+			}
+
+			//hitmarker
+			if (hitMarkerEn)
+			{
+                time += 8 * Time.deltaTime;
+                LocalSceneObjects.singleton.HitMarker.color = new Color(LocalSceneObjects.singleton.HitMarker.color.r, LocalSceneObjects.singleton.HitMarker.color.g, LocalSceneObjects.singleton.HitMarker.color.b, Mathf.Lerp(minimum, maximum, time));
+                if(time > 1)
+				{
+                    float temp = maximum;
+                    maximum = minimum;
+                    minimum = temp;
+                    time = 0;
+				}
+
+
+                if(LocalSceneObjects.singleton.HitMarker.color.a <= 0)
+				{
+                    hitMarkerEn = false;
+                    time = 0;
+                    minimum = 0;
+                    maximum = 1;
+                }
+			}
         }
 
         if (isServer)
@@ -149,6 +181,8 @@ public class OnlineShooting : NetworkBehaviour
                             {
                                 if (BulletInpact >= DamagePlayerScanThreshold && FiltredHits[i].distance <= WeaponStats.GetMaxDistance(weaponController.CurrentWeapon))
                                 {
+                                    TargetRpcShowHitMarker(netIdentity.connectionToClient);
+
                                     HitBox hitB = FiltredHits[i].transform.gameObject.GetComponent<HitBox>();
                                     hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * BulletInpact * DamageMultiplier), GetComponent<PlayerStats>());
                                     if (hitB.plyHealth.Health > 0)
@@ -225,6 +259,8 @@ public class OnlineShooting : NetworkBehaviour
                     HitBox hitB = FiltredHits[0].transform.GetComponent<HitBox>();
                     if(hitB != null)
 					{
+                        TargetRpcShowHitMarker(netIdentity.connectionToClient);
+
                         hitB.plyHealth.CmdRemoveHealth((int)(hitB.HitDmg() * DamageMultiplier), GetComponent<PlayerStats>());
                         if (hitB.plyHealth.Health > 0)
                         {
@@ -252,4 +288,13 @@ public class OnlineShooting : NetworkBehaviour
         bh.transform.rotation *= Quaternion.AngleAxis(Random.Range(0, 360), Vector3.up);
         Destroy(bh, 10);
     }
+
+    [TargetRpc]
+    public void TargetRpcShowHitMarker(NetworkConnection conn)
+	{
+        hitMarkerEn = true;
+        time = 0;
+        minimum = 0;
+        maximum = 1;
+	}
 }
