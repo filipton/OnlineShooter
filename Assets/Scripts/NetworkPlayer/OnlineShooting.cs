@@ -32,6 +32,8 @@ public class OnlineShooting : NetworkBehaviour
     float LerpTime = -1;
     float RememberY = 0;
 
+    float NormalFov = 0;
+
     bool CanShoot = true;
 
     // Start is called before the first frame update
@@ -39,6 +41,7 @@ public class OnlineShooting : NetworkBehaviour
     {
         if(isLocalPlayer)
         {
+            NormalFov = cam.fieldOfView;
             pml = cam.GetComponent<PlayerMouseLook>();
         }
     }
@@ -48,6 +51,17 @@ public class OnlineShooting : NetworkBehaviour
     {
         if(isLocalPlayer && !PH.PlayerKilled)
         {
+			//scope
+			if (Input.GetKeyDown(KeyCode.Mouse1) && weaponController.CurrentWeapon == Weapon.AWP)
+			{
+                bool b = !LocalSceneObjects.singleton.SniperScope.activeSelf;
+                LocalSceneObjects.singleton.SniperScope.SetActive(b);
+
+                cam.fieldOfView = b ? 30 : NormalFov;
+                weaponController.FPC_WeaponModels[(int)Weapon.AWP].SetActive(!b);
+            }
+
+            //shooting
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 LerpTime = -1;
@@ -73,6 +87,7 @@ public class OnlineShooting : NetworkBehaviour
                 CanShoot = false;
             }
 
+            //recoil back
             if (Mathf.Abs(pml.rotationY - RememberY) <= 22.5f && LerpTime > -1 && LerpTime < 1 && pml.CanRotateYAxis)
             {
                 LerpTime += Time.deltaTime;

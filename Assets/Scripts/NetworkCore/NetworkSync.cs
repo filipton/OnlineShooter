@@ -29,7 +29,7 @@ public class NetworkSync : NetworkBehaviour
     }
 
     [Command]
-    public void CmdMovePlayer(Vector3 pos, sbyte xRot, short yRot)
+    public void CmdMovePlayer(Vector3 pos, float xRot, float yRot)
     {
         if (old_position == null)
         {
@@ -55,18 +55,18 @@ public class NetworkSync : NetworkBehaviour
         if (isServer && !isClient && !isLocalPlayer)
         {
             transform.position = pos;
+            cam.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
             transform.rotation = Quaternion.Euler(0, yRot, 0);
-            cam.transform.localRotation = Quaternion.AngleAxis(xRot, -Vector3.right);
         }
     }
 
     [ClientRpc]
-    public void RpcMovePlayer(Vector3 pos, sbyte xRot, short yRot)
+    public void RpcMovePlayer(Vector3 pos, float xRot, float yRot)
     {
         if (!isLocalPlayer)
         {
             transform.position = pos;
-            cam.transform.localRotation = Quaternion.AngleAxis(xRot, -Vector3.right);
+            cam.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
             transform.rotation = Quaternion.Euler(0, yRot, 0);
         }
     }
@@ -95,7 +95,7 @@ public class NetworkSync : NetworkBehaviour
     {
         while (true)
         {
-            CmdMovePlayer(transform.position, (sbyte)pml.rotationY, (short)transform.rotation.eulerAngles.y);
+            CmdMovePlayer(transform.position, cam.transform.eulerAngles.x, transform.eulerAngles.y);
             yield return new WaitForSeconds(Interval);
         }
     }

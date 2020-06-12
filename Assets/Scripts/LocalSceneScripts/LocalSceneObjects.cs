@@ -10,6 +10,7 @@ public class LocalSceneObjects : MonoBehaviour
 
     [Header("Scene Objecs")]
     public TextMeshProUGUI AmmoText;
+    public GameObject SniperScope;
     
     [Header("Tab Player Stats")]
     public GameObject TabPlayerStats;
@@ -24,6 +25,7 @@ public class LocalSceneObjects : MonoBehaviour
     [Header("Team Spawn Points")]
     public Transform TeamASpawn;
     public Transform TeamBSpawn;
+
 
 
     private void Awake()
