@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.Networking.Types;
+using System;
 
 public class NetworkSync : NetworkBehaviour
 {
@@ -11,10 +12,14 @@ public class NetworkSync : NetworkBehaviour
 
     NetworkIdentity Nid;
     PlayerMouseLook pml;
+    PlayerMovement pm;
     public Camera cam;
 
     public float MovementThresholdXZ = 0.400002f;
     public float MovementThresholdY = 0.55f;
+
+    public float Velocity;
+    public bool isSneaking;
 
     Vector3 old_position;
 
@@ -24,12 +29,17 @@ public class NetworkSync : NetworkBehaviour
         {
             Nid = GetComponent<NetworkIdentity>();
             pml = cam.GetComponent<PlayerMouseLook>();
-            StartCoroutine(SyncMovement());
+            pm = GetComponent<PlayerMovement>();
         }
     }
 
-    [Command]
-    public void CmdMovePlayer(Vector3 pos, float xRot, float yRot)
+	private void Update()
+	{
+        if(isLocalPlayer) CmdMovePlayer(transform.position, cam.transform.eulerAngles.x, transform.eulerAngles.y, Convert.ToByte(pm.isSneaking));
+    }
+
+	[Command]
+    public void CmdMovePlayer(Vector3 pos, float xRot, float yRot, byte sneaking)
     {
         if (old_position == null)
         {
@@ -41,6 +51,9 @@ public class NetworkSync : NetworkBehaviour
             {
                 float xzdistspeed = (new Vector2(pos.x, pos.z) - new Vector2(old_position.x, old_position.z)).magnitude;
                 float ydistspeed = Mathf.Abs(pos.y - old_position.y);
+
+                Velocity = xzdistspeed / Time.deltaTime;
+                isSneaking = Convert.ToBoolean(sneaking);
 
                 if (xzdistspeed > MovementThresholdXZ || ydistspeed > MovementThresholdY)
                 {
@@ -89,14 +102,5 @@ public class NetworkSync : NetworkBehaviour
 
         old_position = pos;
         TargetRpcMoveBackPlayer(Nid.connectionToClient, pos);
-    }
-
-    IEnumerator SyncMovement()
-    {
-        while (true)
-        {
-            CmdMovePlayer(transform.position, cam.transform.eulerAngles.x, transform.eulerAngles.y);
-            yield return new WaitForSeconds(Interval);
-        }
     }
 }
