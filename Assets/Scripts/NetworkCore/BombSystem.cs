@@ -118,27 +118,41 @@ public class BombSystem : NetworkBehaviour
     [ServerCallback]
     public void CmdTogglePlantBomb(bool tb, NetworkIdentity id)
 	{
-        if (nid == null)
-		{
-            nid = id;
-		}
-        IsPlanting = tb;
-        m_plantingTime = 0f;
+        if (!IsExploding && !IsPlanting|| !IsExploding && IsPlanting&& !tb)
+        {
+            if (SiteA.bounds.Contains(id.transform.position) || SiteB.bounds.Contains(id.transform.position) && !IsExploding)
+            {
+                float y = id.transform.position.y - SiteA.transform.position.y;
+                if (y > 0.8f && y < 0.9f)
+                {
+                    nid = id;
+                    IsPlanting = tb;
+                    m_plantingTime = 0f;
 
-        TargetRpcTogglePlantBombInClient(id.connectionToClient, tb);
+                    TargetRpcTogglePlantBombInClient(id.connectionToClient, tb);
+                }
+            }
+        }
 	}
 
     [ServerCallback]
     public void CmdToggleDefuseBomb(bool tb, NetworkIdentity id)
     {
-        if (nid == null)
-        {
-            nid = id;
-        }
-        IsDefusing = tb;
-        m_defusingTime = 0f;
+        if(IsExploding && !IsDefusing || IsExploding && IsDefusing && !tb)
+		{
+            if ((id.transform.position - bomb.transform.position).magnitude <= 2)
+            {
+                float y = id.transform.position.y - SiteA.transform.position.y;
+                if (y > 0.8f && y < 0.9f)
+                {
+                    nid = id;
+                    IsDefusing = tb;
+                    m_defusingTime = 0f;
 
-        TargetRpcTogglePlantBombInClient(id.connectionToClient, tb);
+                    TargetRpcTogglePlantBombInClient(id.connectionToClient, tb);
+                }
+            }
+        }
     }
 
     [TargetRpc]
