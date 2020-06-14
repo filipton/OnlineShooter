@@ -7,11 +7,7 @@ using System;
 
 public class NetworkSync : NetworkBehaviour
 {
-    [Range(0, 0.5f)]
-    public float Interval;
-
     NetworkIdentity Nid;
-    PlayerMouseLook pml;
     PlayerMovement pm;
     public Camera cam;
 
@@ -28,7 +24,6 @@ public class NetworkSync : NetworkBehaviour
         if (isLocalPlayer)
         {
             Nid = GetComponent<NetworkIdentity>();
-            pml = cam.GetComponent<PlayerMouseLook>();
             pm = GetComponent<PlayerMovement>();
         }
     }

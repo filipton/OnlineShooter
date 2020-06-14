@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using Dissonance;
+using Mirror;
 using Mirror.Websocket;
 using System.Collections;
 using System.Collections.Generic;
@@ -76,12 +77,28 @@ public class PlayerStats : NetworkBehaviour
                 TargetRpcSetMapIcons(ps.netIdentity.connectionToClient, netIdentity);
 			}
         }
+
+        TargetRpcSetTeamVoice(netIdentity.connectionToClient, $"Team{((PlayerTeam == Team.Team1) ? "A" : "B")}");
     }
 
     [TargetRpc]
     public void TargetRpcSetMapIcons(NetworkConnection conn, NetworkIdentity id)
 	{
         id.gameObject.GetComponent<PlayerList>().PlayerIconOnMap.SetActive(true);
+    }
+
+    [TargetRpc]
+    public void TargetRpcSetTeamVoice(NetworkConnection conn, string teamName)
+	{
+        var comms = FindObjectOfType<DissonanceComms>();
+
+        if (comms == null)
+        {
+            Debug.Log($"Cannot find voice components for team '{teamName}'");
+            return;
+        }
+
+        comms.AddToken(teamName);
     }
 
     [ServerCallback]
