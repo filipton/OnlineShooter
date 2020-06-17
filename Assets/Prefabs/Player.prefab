@@ -1812,6 +1812,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   playerStats: {fileID: 5786514638354078809}
+  ammoController: {fileID: 5786514638354078821}
 --- !u!114 &5786514638354078827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1929,6 +1930,8 @@ MonoBehaviour:
   CurrentRadiactiveAmmoMagazine:
     InMagazine: 0
   AmmoBoxPrefab: {fileID: 4431188933151926330, guid: 33002bcea20602948a97f58c9bfcbff3,
+    type: 3}
+  DroppedWeaponPrefab: {fileID: 2161037608242246792, guid: 29f73ba88acb28644a6f64e15286d12b,
     type: 3}
 --- !u!114 &5786514638354078803
 MonoBehaviour:

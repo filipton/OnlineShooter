@@ -25,7 +25,7 @@ public class AmmoBox : NetworkBehaviour
             if (C == null)
                 C = FindObjectsOfType<AmmoController>().ToList().Find(x => x.isLocalPlayer);
 
-            if((transform.position - C.transform.position).magnitude < 3f)
+            if((transform.position - C.transform.position).sqrMagnitude < 3*3)
             {
                 C.CmdPickupAmmoBox(gameObject);
             }

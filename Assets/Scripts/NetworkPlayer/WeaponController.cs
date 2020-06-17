@@ -155,6 +155,23 @@ public class WeaponStats
         return 0;
     }
 
+    public static int GetAmmoCost(AmmoType at)
+    {
+        switch (at)
+        {
+            case AmmoType.Heavy:
+                return 300;
+            case AmmoType.Light:
+                return 350;
+            case AmmoType.Radioactive:
+                return 400;
+            case AmmoType.KnifeAmmo:
+                return 50;
+        }
+
+        return 0;
+    }
+
     public static float GetDamgeMultiplier(Weapon w)
     {
         switch (w)

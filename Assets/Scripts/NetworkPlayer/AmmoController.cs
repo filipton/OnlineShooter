@@ -42,24 +42,8 @@ public class AmmoController : NetworkBehaviour
     [SyncVar] public AmmoMagazine CurrentRadiactiveAmmoMagazine = new AmmoMagazine();
 
     public GameObject AmmoBoxPrefab;
+    public GameObject DroppedWeaponPrefab;
 
-    [ServerCallback]
-    private void Start()
-    {
-        //for testing before buing ammo system
-
-        CurrentKnifeDurability = new AmmoMagazine(WeaponStats.GetMaxMagazineSize(AmmoType.KnifeAmmo));
-
-        for(int x = 0; x < 3; x++)
-        {
-            for (int i = 0; i < MaxMagazinesInPlayer; i++)
-            {
-                GetAmmoMagazines((AmmoType)x).Add(new AmmoMagazine(WeaponStats.GetMaxMagazineSize((AmmoType)x)));
-                SetDefaultAmmoByAmmoType((AmmoType)x);
-            }
-        }
-        RefreshAllInPlayerAmmo();
-    }
 
     private void Update()
     {
@@ -69,6 +53,10 @@ public class AmmoController : NetworkBehaviour
             {
                 CmdReload();
             }
+			if (Input.GetKeyDown(KeyCode.G))
+			{
+                CmdDropWeapon();
+			}
 
             if (m_inPlayer != InPlayer || m_inMagazine != CurrentInMagazine)
             {
@@ -95,6 +83,24 @@ public class AmmoController : NetworkBehaviour
 
             SetAmmoInCurrentMagazine(GetAmmoMagazines(weaponController.CurrentAmmoType)[0].InMagazine);
             GetAmmoMagazines(weaponController.CurrentAmmoType).RemoveAt(0);
+            RefreshAllInPlayerAmmo();
+        }
+    }
+
+    [Command]
+    public void CmdDropWeapon()
+    {
+        if(weaponController.economySystem.PlayerWeapons.Count > 0)
+		{
+            GameObject gb = Instantiate(DroppedWeaponPrefab, transform.position, Quaternion.Euler(0, 0, 0));
+            DroppedWeapon ab = gb.GetComponent<DroppedWeapon>();
+            ab.InMagazine = CurrentInMagazine;
+            ab.WeaponType = weaponController.CurrentWeapon;
+            NetworkServer.Spawn(gb);
+
+            weaponController.economySystem.PlayerWeapons.Remove(weaponController.CurrentWeapon);
+            RemoveAmmoInCurrentMagazine(GetCurrentAmmoInMagazine());
+
             RefreshAllInPlayerAmmo();
         }
     }
@@ -129,7 +135,7 @@ public class AmmoController : NetworkBehaviour
     public void CmdPickupAmmoBox(GameObject gbAmmoBox)
     {
         AmmoBox ab = gbAmmoBox.GetComponent<AmmoBox>();
-        if(ab != null && (transform.position - gbAmmoBox.transform.position).magnitude < 3f && GetAmmoMagazines(ab.MagazineAmmoType).Count < MaxMagazinesInPlayer)
+        if(ab != null && (transform.position - gbAmmoBox.transform.position).sqrMagnitude < 3*3 && GetAmmoMagazines(ab.MagazineAmmoType).Count < MaxMagazinesInPlayer)
         {
             GetAmmoMagazines(ab.MagazineAmmoType).Add(new AmmoMagazine(ab.InMagazine));
             NetworkServer.UnSpawn(gbAmmoBox);
@@ -143,24 +149,32 @@ public class AmmoController : NetworkBehaviour
         return at.Equals(AmmoType.Heavy) ? HeavyAmmoMagazines : (at.Equals(AmmoType.Light) ? LightAmmoMagazines : RadioactiveAmmoMagazines);
     }
 
-    //for testing before buing ammo system
+
     [ServerCallback]
-    public void SetDefaultAmmoByAmmoType(AmmoType at)
+    public void ServerSetAmmo(AmmoType at, int amount)
     {
-        switch (at)
-        {
-            case AmmoType.Heavy:
-                CurrentHeavyAmmoMagazine.InMagazine = WeaponStats.GetMaxMagazineSize(at);
-                break;
-            case AmmoType.Light:
-                CurrentLightAmmoMagazine.InMagazine = WeaponStats.GetMaxMagazineSize(at);
-                break;
-            case AmmoType.Radioactive:
-                CurrentRadiactiveAmmoMagazine.InMagazine = WeaponStats.GetMaxMagazineSize(at);
-                break;
-            case AmmoType.KnifeAmmo:
-                CurrentKnifeDurability.InMagazine = WeaponStats.GetMaxMagazineSize(at);
-                break;
+        if (GetAmmoMagazines(at).Count < MaxMagazinesInPlayer)
+		{
+            amount = Mathf.Clamp(amount, 0, WeaponStats.GetMaxMagazineSize(at));
+
+            switch (at)
+            {
+                case AmmoType.Heavy:
+                    HeavyAmmoMagazines.Add(new AmmoMagazine(amount));
+                    break;
+                case AmmoType.Light:
+                    LightAmmoMagazines.Add(new AmmoMagazine(amount));
+                    break;
+                case AmmoType.Radioactive:
+                    RadioactiveAmmoMagazines.Add(new AmmoMagazine(amount));
+                    break;
+                case AmmoType.KnifeAmmo:
+                    CurrentKnifeDurability.InMagazine = amount;
+                    break;
+            }
+
+            RefreshCurrentAmmoInMagazine();
+            RefreshAllInPlayerAmmo();
         }
     }
 
@@ -188,9 +202,13 @@ public class AmmoController : NetworkBehaviour
     }
 
     [ServerCallback]
-    public void SetAmmoInCurrentMagazine(int amount)
+    public void SetAmmoInCurrentMagazine(int amount, Nullable<AmmoType> type = null)
     {
         AmmoType at = weaponController.CurrentAmmoType;
+
+        if (type != null)
+            at = type.Value;
+
         switch (at)
         {
             case AmmoType.Heavy:

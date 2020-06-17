@@ -38,4 +38,12 @@ public class BuyMenu : MonoBehaviour
 
         MoneyText.text = ps.Money.ToString();
     }
+
+    public void BuyAmmo(string ammoType)
+    {
+        AmmoType at = (AmmoType)Enum.Parse(typeof(AmmoType), ammoType);
+        es.CmdBuyAmmo(at);
+
+        MoneyText.text = ps.Money.ToString();
+    }
 }
