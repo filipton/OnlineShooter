@@ -80,6 +80,9 @@ public class EconomySystem : NetworkBehaviour
                     if (weaponsCWK < 2)
                     {
                         PlayerWeapons.Add(new MWeapon(w, dw.InMagazine));
+
+                        NetworkServer.UnSpawn(DroppedGun);
+                        NetworkServer.Destroy(DroppedGun);
                     }
                 }
                 else
@@ -87,12 +90,12 @@ public class EconomySystem : NetworkBehaviour
                     if (weaponsC < 2 || w == Weapon.Knife)
                     {
                         PlayerWeapons.Add(new MWeapon(w, dw.InMagazine));
+
+                        NetworkServer.UnSpawn(DroppedGun);
+                        NetworkServer.Destroy(DroppedGun);
                     }
                 }
             }
-
-            NetworkServer.UnSpawn(DroppedGun);
-            NetworkServer.Destroy(DroppedGun);
         }
     }
 
@@ -100,7 +103,6 @@ public class EconomySystem : NetworkBehaviour
     public void CmdBuyAmmo(AmmoType at)
     {
         int atCost = WeaponStats.GetAmmoCost(at);
-        print($"1: {WeaponStats.GetMaxInPlayer(at)}    2: {ammoController.GetAmmoAmount(at)}");
 
         if(playerStats.Money >= atCost && ammoController.GetAmmoAmount(at) < WeaponStats.GetMaxInPlayer(at))
 		{

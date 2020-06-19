@@ -85,6 +85,11 @@ public class RoundController : NetworkBehaviour
             NetworkServer.UnSpawn(gbAmmoBox.gameObject);
             NetworkServer.Destroy(gbAmmoBox.gameObject);
         }
+        foreach (DroppedWeapon dWeapon in FindObjectsOfType<DroppedWeapon>())
+        {
+            NetworkServer.UnSpawn(dWeapon.gameObject);
+            NetworkServer.Destroy(dWeapon.gameObject);
+        }
 
         foreach (PlayerStats p in FindObjectsOfType<PlayerStats>())
         {
