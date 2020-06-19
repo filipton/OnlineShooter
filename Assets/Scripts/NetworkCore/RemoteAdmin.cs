@@ -37,10 +37,7 @@ public class RemoteAdmin : NetworkBehaviour
                             int count = int.Parse(args[3]);
                             AmmoController ac = id.GetComponent<AmmoController>();
                             WeaponController wc = id.GetComponent<WeaponController>();
-                            for (int i = 0; i < count; i++)
-                            {
-                                ac.GetAmmoMagazines(wc.CurrentAmmoType).Add(new AmmoMagazine(ac.MaxInMagazine));
-                            }
+                            ac.ServerAddAmmo(wc.CurrentAmmoType, count * WeaponStats.GetMaxMagazineSize(wc.CurrentAmmoType));
                             ac.RefreshAllInPlayerAmmo();
                             ret = $"{Nick} got {args[3]} ammo magazines! ({args[3]}x{WeaponStats.GetMaxMagazineSize(wc.CurrentAmmoType)} ammo)";
                             break;

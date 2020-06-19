@@ -6,6 +6,7 @@ using UnityEngine;
 
 public enum Weapon
 {
+    None = -1,
     Knife,
     Defender,
     Breaker,
@@ -17,6 +18,7 @@ public enum Weapon
 
 public enum AmmoType
 {
+    None = -1,
     Light,
     Heavy,
     Radioactive,
@@ -67,7 +69,7 @@ public class WeaponController : NetworkBehaviour
         {
             CurrentSelectedWeaponIndex -= currWeapon;
             CurrentSelectedWeaponIndex = Mathf.Clamp(CurrentSelectedWeaponIndex, 0, economySystem.PlayerWeapons.Count - 1);
-            Weapon w = economySystem.PlayerWeapons[CurrentSelectedWeaponIndex];
+            Weapon w = economySystem.PlayerWeapons[CurrentSelectedWeaponIndex].weapon;
             CurrentWeapon = w;
             CurrentAmmoType = WeaponStats.GetAmmoType(w);
             ServerChangeWeapon(w, WeaponStats.GetAmmoType(w));
@@ -98,7 +100,7 @@ public class WeaponController : NetworkBehaviour
             gb.SetActive(false);
         }
 
-        Weapon currW = economySystem.PlayerWeapons[ind];
+        Weapon currW = economySystem.PlayerWeapons[ind].weapon;
         FPC_WeaponModels[(int)currW].SetActive(true);
         WeaponModels[(int)currW].SetActive(true);
     }
@@ -275,5 +277,22 @@ public class WeaponStats
         }
 
         return 250;
+    }
+
+    public static int GetMaxInPlayer(AmmoType at)
+    {
+        switch (at)
+        {
+            case AmmoType.Heavy:
+                return 120;
+            case AmmoType.Light:
+                return 150;
+            case AmmoType.Radioactive:
+                return 60;
+            case AmmoType.KnifeAmmo:
+                return 25;
+        }
+
+        return 0;
     }
 }

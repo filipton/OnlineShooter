@@ -1,9 +1,23 @@
 ﻿using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SyncWeapons : SyncList<Weapon> { }
+[Serializable]
+public struct MWeapon
+{
+    public Weapon weapon;
+    public int AmmoInMagazine;
+
+    public MWeapon(Weapon w, int aim)
+    {
+        weapon = w;
+        AmmoInMagazine = aim;
+    }
+}
+
+public class SyncWeapons : SyncList<MWeapon> { }
 
 public class EconomySystem : NetworkBehaviour
 {
@@ -18,6 +32,7 @@ public class EconomySystem : NetworkBehaviour
     {
         int weaponsC = PlayerWeapons.Count;
         int Wcost = WeaponStats.GetWeaponCost(w);
+        AmmoType at = WeaponStats.GetAmmoType(w);
 
         if (weaponsC < 3 && !WeaponAlready(w) && playerStats.Money >= Wcost)
         {
@@ -30,7 +45,7 @@ public class EconomySystem : NetworkBehaviour
                 if(weaponsCWK < 2)
                 {
                     playerStats.Money -= Wcost;
-                    PlayerWeapons.Add(w);
+                    PlayerWeapons.Add(new MWeapon(w, WeaponStats.GetMaxMagazineSize(at)));
                 }
             }
             else
@@ -38,13 +53,10 @@ public class EconomySystem : NetworkBehaviour
                 if(weaponsC < 2 || w == Weapon.Knife)
                 {
                     playerStats.Money -= Wcost;
-                    PlayerWeapons.Add(w);
+                    PlayerWeapons.Add(new MWeapon(w, WeaponStats.GetMaxMagazineSize(at)));
                 }
             }
         }
-
-        AmmoType at = WeaponStats.GetAmmoType(w);
-        ammoController.SetAmmoInCurrentMagazine(WeaponStats.GetMaxMagazineSize(at), at);
     }
 
     [Command]
@@ -67,20 +79,17 @@ public class EconomySystem : NetworkBehaviour
                 {
                     if (weaponsCWK < 2)
                     {
-                        PlayerWeapons.Add(w);
+                        PlayerWeapons.Add(new MWeapon(w, dw.InMagazine));
                     }
                 }
                 else
                 {
                     if (weaponsC < 2 || w == Weapon.Knife)
                     {
-                        PlayerWeapons.Add(w);
+                        PlayerWeapons.Add(new MWeapon(w, dw.InMagazine));
                     }
                 }
             }
-
-            AmmoType at = WeaponStats.GetAmmoType(w);
-            ammoController.SetAmmoInCurrentMagazine(dw.InMagazine, at);
 
             NetworkServer.UnSpawn(DroppedGun);
             NetworkServer.Destroy(DroppedGun);
@@ -91,20 +100,47 @@ public class EconomySystem : NetworkBehaviour
     public void CmdBuyAmmo(AmmoType at)
     {
         int atCost = WeaponStats.GetAmmoCost(at);
+        print($"1: {WeaponStats.GetMaxInPlayer(at)}    2: {ammoController.GetAmmoAmount(at)}");
 
-        if(playerStats.Money >= atCost && ammoController.GetAmmoMagazines(at).Count < ammoController.MaxMagazinesInPlayer)
+        if(playerStats.Money >= atCost && ammoController.GetAmmoAmount(at) < WeaponStats.GetMaxInPlayer(at))
 		{
-            ammoController.ServerSetAmmo(at, WeaponStats.GetMaxMagazineSize(at));
+            ammoController.ServerAddAmmo(at, WeaponStats.GetMaxMagazineSize(at));
             playerStats.Money -= atCost;
 		}
+    }
+
+    [ServerCallback]
+    public int ServerGetWeaponAmmo(int index)
+	{
+        if(index > -1 && PlayerWeapons.Count >= 0)
+		{
+            return PlayerWeapons[index].AmmoInMagazine;
+        }
+        return 0;
+	}
+
+    [ServerCallback]
+    public void ServerSetWeaponAmmo(int index, int amount)
+    {
+        if (index > -1 && PlayerWeapons.Count >= 0)
+        {
+            MWeapon mw = PlayerWeapons[index];
+            PlayerWeapons[index] = new MWeapon(mw.weapon, amount);
+        }
+    }
+
+    [ServerCallback]
+    public void ServerAddWeaponAmmo(int index, int amount)
+    {
+        ServerSetWeaponAmmo(index, PlayerWeapons[index].AmmoInMagazine + amount);
     }
 
     bool CheckIfKnife()
     {
         bool haveknife = false;
-        foreach(Weapon w in PlayerWeapons)
+        foreach(MWeapon w in PlayerWeapons)
         {
-            if(w == Weapon.Knife)
+            if(w.weapon == Weapon.Knife)
             {
                 haveknife = true;
             }
@@ -116,9 +152,9 @@ public class EconomySystem : NetworkBehaviour
     bool WeaponAlready(Weapon ww)
     {
         bool havew = false;
-        foreach (Weapon w in PlayerWeapons)
+        foreach (MWeapon w in PlayerWeapons)
         {
-            if (w == ww)
+            if (w.weapon == ww)
             {
                 havew = true;
             }

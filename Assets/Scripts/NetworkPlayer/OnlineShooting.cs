@@ -270,7 +270,8 @@ public class OnlineShooting : NetworkBehaviour
                 }
             }
 
-            ammo.RemoveAmmoInCurrentMagazine(1);
+            weaponController.economySystem.ServerAddWeaponAmmo(weaponController.CurrentSelectedWeaponIndex, -1);
+            ammo.RefreshCurrentAmmoInMagazine();
             NextTimeP = ShootRate - 0.1f;
         }
     }
