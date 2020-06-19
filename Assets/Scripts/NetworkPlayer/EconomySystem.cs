@@ -112,7 +112,7 @@ public class EconomySystem : NetworkBehaviour
     [ServerCallback]
     public int ServerGetWeaponAmmo(int index)
 	{
-        if(index > -1 && PlayerWeapons.Count >= 0)
+        if(index > -1 && PlayerWeapons.Count >= 0 && index < PlayerWeapons.Count)
 		{
             return PlayerWeapons[index].AmmoInMagazine;
         }
@@ -122,7 +122,7 @@ public class EconomySystem : NetworkBehaviour
     [ServerCallback]
     public void ServerSetWeaponAmmo(int index, int amount)
     {
-        if (index > -1 && PlayerWeapons.Count >= 0)
+        if (index > -1 && PlayerWeapons.Count >= 0 && index < PlayerWeapons.Count)
         {
             MWeapon mw = PlayerWeapons[index];
             PlayerWeapons[index] = new MWeapon(mw.weapon, amount);
@@ -132,7 +132,10 @@ public class EconomySystem : NetworkBehaviour
     [ServerCallback]
     public void ServerAddWeaponAmmo(int index, int amount)
     {
-        ServerSetWeaponAmmo(index, PlayerWeapons[index].AmmoInMagazine + amount);
+        if(PlayerWeapons.Count >= 0 && index < PlayerWeapons.Count)
+		{
+            ServerSetWeaponAmmo(index, PlayerWeapons[index].AmmoInMagazine + amount);
+        }
     }
 
     bool CheckIfKnife()

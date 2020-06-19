@@ -94,7 +94,12 @@ public class AmmoController : NetworkBehaviour
             int ind = weaponController.economySystem.PlayerWeapons.FindIndex(x => x.weapon == weaponController.CurrentWeapon);
 
             weaponController.economySystem.PlayerWeapons.RemoveAt(ind);
-            ServerSetAmmo(weaponController.CurrentAmmoType, 0);
+
+            weaponController.RpcChangeWeaponModel(-1);
+            weaponController.CurrentWeapon = Weapon.None;
+            weaponController.CurrentAmmoType = AmmoType.None;
+
+            CurrentInMagazine = 0;
         }
     }
 

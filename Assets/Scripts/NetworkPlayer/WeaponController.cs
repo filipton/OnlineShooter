@@ -100,9 +100,12 @@ public class WeaponController : NetworkBehaviour
             gb.SetActive(false);
         }
 
-        Weapon currW = economySystem.PlayerWeapons[ind].weapon;
-        FPC_WeaponModels[(int)currW].SetActive(true);
-        WeaponModels[(int)currW].SetActive(true);
+        if(ind > -1)
+		{
+            Weapon currW = economySystem.PlayerWeapons[ind].weapon;
+            FPC_WeaponModels[(int)currW].SetActive(true);
+            WeaponModels[(int)currW].SetActive(true);
+        }
     }
 
     private void OnValidate()
