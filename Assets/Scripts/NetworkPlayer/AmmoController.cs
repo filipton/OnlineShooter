@@ -27,6 +27,7 @@ public class AmmoController : NetworkBehaviour
     [SyncVar] public int CurrentInMagazine;
 
     public WeaponController weaponController;
+    public PlayerHealth playerHealth;
 
     [Header("AmmoMagazines")]
     [SyncVar] public short HeavyAmmoInPlayer; 
@@ -42,7 +43,7 @@ public class AmmoController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.R) && !playerHealth.PlayerKilled)
             {
                 CmdReload();
             }
@@ -63,7 +64,7 @@ public class AmmoController : NetworkBehaviour
     [Command]
     public void CmdReload()
     {
-        if(InPlayer > 0)
+        if(InPlayer > 0 && !playerHealth.PlayerKilled)
         {
             if (CurrentInMagazine > 0)
             {
@@ -119,7 +120,7 @@ public class AmmoController : NetworkBehaviour
     public void CmdPickupAmmoBox(GameObject gbAmmoBox)
     {
         AmmoBox ab = gbAmmoBox.GetComponent<AmmoBox>();
-        if(ab != null && (transform.position - gbAmmoBox.transform.position).sqrMagnitude < 3*3 && GetCurrentAmmoInPlayer() < WeaponStats.GetMaxInPlayer(weaponController.CurrentAmmoType))
+        if(ab != null && (transform.position - gbAmmoBox.transform.position).sqrMagnitude < 3*3 && GetCurrentAmmoInPlayer() < WeaponStats.GetMaxInPlayer(weaponController.CurrentAmmoType) && !ab.ph.PlayerKilled)
         {
             int max = WeaponStats.GetMaxInPlayer(ab.MagazineAmmoType);
 

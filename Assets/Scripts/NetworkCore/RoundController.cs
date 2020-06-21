@@ -1,29 +1,70 @@
 ﻿using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[Serializable]
+public struct RTeamsPerms
+{
+    public Team team;
+    public bool WinAfterRunOutOfTimeAndBombNotExploeded;
+    public bool WinAfterBombExploded;
+    public bool WinAfterBombDefused;
+}
+
 public class RoundController : NetworkBehaviour
 {
     public static RoundController singleton;
 
-    [SyncVar]
-    public int Team1Wins;
+    [SyncVar] public int Team1Wins;
+    [SyncVar] public int Team2Wins;
+    [SyncVar] public float RoundTimeReaming;
 
-    [SyncVar]
-    public int Team2Wins;
-
-
+    public float RoundTime = 150f;
     public int WinRoundCount = 15;
+
+    [Header("Permissions")]
+    public List<RTeamsPerms> teamsPermissions = new List<RTeamsPerms>();
 
     private void Start()
     {
         singleton = this;
+
+        if(isServer)
+		{
+            RoundTimeReaming = RoundTime;
+		}
+    }
+
+	private void Update()
+	{
+        if (isServer) ServerUpdate();
+
+		if (isClient)
+		{
+            TimeSpan ts = TimeSpan.FromSeconds(RoundTimeReaming);
+            string minutes = ts.Minutes.ToString();
+            string seconds = (ts.Seconds < 10 && ts.Seconds >= 0) ? $"0{ts.Seconds}" : ts.Seconds.ToString();
+            LocalSceneObjects.singleton.RoundTime.text = $"{minutes}:{seconds}";
+        }
     }
 
     [ServerCallback]
+    void ServerUpdate()
+	{
+        RoundTimeReaming -= Time.deltaTime;
+
+        if(RoundTimeReaming <= 0)
+		{
+            CheckIfAnyTeamWin();
+        }
+    }
+
+
+	[ServerCallback]
     public void AddWins(Team pTeam)
     {
         if(pTeam == Team.Team1)
@@ -42,23 +83,41 @@ public class RoundController : NetworkBehaviour
         bool Team1Win = false;
         bool Team2Win = false;
 
-        foreach (PlayerList pl in FindObjectsOfType<PlayerList>())
+        Team WinTeam = Team.WithoutTeam;
+        BombSystem bs = FindObjectOfType<BombSystem>();
+        foreach (RTeamsPerms tp in teamsPermissions)
         {
-            if (pl.ps.PlayerTeam == Team.Team1 && !pl.ph.PlayerKilled)
+            if ((tp.WinAfterRunOutOfTimeAndBombNotExploeded && RoundTimeReaming <= 0) || (tp.WinAfterBombExploded && bs.IsExploding && bs.m_bombExplosionTime >= bs.BombExplosionTime) || (tp.WinAfterBombDefused && bs.IsDefusing && bs.m_defusingTime >= bs.DefusingTime))
             {
-                Team1Win = true;
-            }
-            else if (pl.ps.PlayerTeam == Team.Team2 && !pl.ph.PlayerKilled)
-            {
-                Team2Win = true;
+                if (tp.team == Team.Team1) Team1Win = true;
+                else if (tp.team == Team.Team2) Team2Win = true;
+                goto skip_point;
             }
         }
 
+		if (!bs.IsExploding)
+		{
+            foreach (PlayerList pl in FindObjectsOfType<PlayerList>())
+            {
+                if (pl.ps.PlayerTeam == Team.Team1 && !pl.ph.PlayerKilled)
+                {
+                    Team1Win = true;
+                }
+                else if (pl.ps.PlayerTeam == Team.Team2 && !pl.ph.PlayerKilled)
+                {
+                    Team2Win = true;
+                }
+            }
+        }
+
+
+        skip_point:
+
         if (Team1Win != Team2Win)
         {
-            Team WinTeam = Team.WithoutTeam;
             if (Team1Win) { WinTeam = Team.Team1; }
             else if (Team2Win) { WinTeam = Team.Team2; }
+
             AddWins(WinTeam);
 
             bool IsTeam1GameWin = Team1Wins >= WinRoundCount;
@@ -72,6 +131,8 @@ public class RoundController : NetworkBehaviour
             {
                 StartCoroutine(EndRound(5f));
             }
+
+            RoundTimeReaming = RoundTime + 5f;
         }
     }
 

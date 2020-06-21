@@ -35,10 +35,11 @@ public class OnlineShooting : NetworkBehaviour
 
     //scope
     float NormalFov = 0;
+    float NormalSX = 0;
+    float NormalSY = 0;
 
     //Hitmarker
     bool hitMarkerEn;
-
     float time = 0f;
     float minimum = 0;
     float maximum = 255;
@@ -51,6 +52,8 @@ public class OnlineShooting : NetworkBehaviour
         if(isLocalPlayer)
         {
             NormalFov = cam.fieldOfView;
+            NormalSX = pml.sensitivityX;
+            NormalSY = pml.sensitivityY;
             pml = cam.GetComponent<PlayerMouseLook>();
         }
     }
@@ -67,6 +70,8 @@ public class OnlineShooting : NetworkBehaviour
                 LocalSceneObjects.singleton.SniperScope.SetActive(b);
 
                 cam.fieldOfView = b ? 30 : NormalFov;
+                pml.sensitivityX = b ? 0.5f * NormalSX : NormalSX;
+                pml.sensitivityY = b ? 0.5f * NormalSY : NormalSY;
                 weaponController.FPC_WeaponModels[(int)Weapon.AWP].SetActive(!b);
             }
 

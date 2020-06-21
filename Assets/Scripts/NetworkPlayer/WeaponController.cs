@@ -25,8 +25,38 @@ public enum AmmoType
     KnifeAmmo
 }
 
+[Serializable]
+public struct WeaponInfo
+{
+    public Weapon weapon;
+    public int WeaponCost;
+    public float FireRate;
+    public float DamageMultiplier;
+    public AmmoType AmmoType;
+    public bool FullAuto;
+    public float MaxDistance;
+}
+
+[Serializable]
+public struct AmmoInfo
+{
+    public AmmoType ammoType;
+    public int MaxMagazineSize;
+    public int AmmoCost;
+    public int MaxInPlayer;
+}
+
+[Serializable]
+public struct Weapon_AmmoInfo
+{
+    public List<WeaponInfo> weaponInfos;
+    public List<AmmoInfo> ammoInfos;
+}
+
 public class WeaponController : NetworkBehaviour
 {
+    public Weapon_AmmoInfo weapon_AmmoInfo;
+
     [SyncVar]
     public Weapon CurrentWeapon;
 
@@ -43,11 +73,6 @@ public class WeaponController : NetworkBehaviour
     public OnlineShooting onlineShooting;
     public AmmoController ammoController;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     void Update()
     {
@@ -105,15 +130,6 @@ public class WeaponController : NetworkBehaviour
             Weapon currW = economySystem.PlayerWeapons[ind].weapon;
             FPC_WeaponModels[(int)currW].SetActive(true);
             WeaponModels[(int)currW].SetActive(true);
-        }
-    }
-
-    private void OnValidate()
-    {
-        if (isClient)
-        {
-            CurrentAmmoType = WeaponStats.GetAmmoType(CurrentWeapon);
-            CmdChangeWeapon((int)CurrentWeapon);
         }
     }
 }

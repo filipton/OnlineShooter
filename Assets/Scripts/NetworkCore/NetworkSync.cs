@@ -10,6 +10,7 @@ public class NetworkSync : NetworkBehaviour
     NetworkIdentity Nid;
     PlayerMovement pm;
     public Camera cam;
+    public GameObject head;
 
     public float MovementThresholdXZ = 0.400002f;
     public float MovementThresholdY = 0.55f;
@@ -64,6 +65,7 @@ public class NetworkSync : NetworkBehaviour
         {
             transform.position = pos;
             cam.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
+            head.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
             transform.rotation = Quaternion.Euler(0, yRot, 0);
         }
     }
@@ -75,6 +77,7 @@ public class NetworkSync : NetworkBehaviour
         {
             transform.position = pos;
             cam.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
+            head.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
             transform.rotation = Quaternion.Euler(0, yRot, 0);
         }
     }

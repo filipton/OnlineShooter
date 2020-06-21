@@ -28,7 +28,8 @@ public class LocalSceneObjects : MonoBehaviour
     public Transform TeamASpawn;
     public Transform TeamBSpawn;
 
-
+    [Header("RoundTime | Planting/DefuseTime")]
+    public TextMeshProUGUI RoundTime;
 
     private void Awake()
     {

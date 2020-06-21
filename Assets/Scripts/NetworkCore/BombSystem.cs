@@ -6,8 +6,18 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
+[Serializable]
+public struct BTeamsPerms
+{
+    public Team PlantingTeam;
+    public Team DefusingTeam;
+}
+
+
 public class BombSystem : NetworkBehaviour
 {
+    public BTeamsPerms bTeamsPerms;
+
     public float Distance = 100f;
 
     [SyncVar] public float m_plantingTime;
@@ -59,6 +69,8 @@ public class BombSystem : NetworkBehaviour
                             TargetRpcTogglePlantBombInClient(nid.connectionToClient, false);
 
                             IsExploding = true;
+
+                            RoundController.singleton.RoundTimeReaming = BombExplosionTime+1f;
                         }
                     }
                 }
@@ -69,6 +81,8 @@ public class BombSystem : NetworkBehaviour
 
                 if (m_bombExplosionTime >= BombExplosionTime)
 				{
+                    RoundController.singleton.CheckIfAnyTeamWin();
+
                     NetworkServer.UnSpawn(bomb);
                     NetworkServer.Destroy(bomb);
 
@@ -98,6 +112,8 @@ public class BombSystem : NetworkBehaviour
 
                         if (m_defusingTime >= DefusingTime)
                         {
+                            RoundController.singleton.CheckIfAnyTeamWin();
+
                             IsDefusing = false;
                             m_defusingTime = 0f;
 
@@ -118,7 +134,7 @@ public class BombSystem : NetworkBehaviour
     [ServerCallback]
     public void CmdTogglePlantBomb(bool tb, NetworkIdentity id)
 	{
-        if (!IsExploding && !IsPlanting|| !IsExploding && IsPlanting&& !tb)
+        if ((!IsExploding && !IsPlanting|| !IsExploding && IsPlanting&& !tb) && id.GetComponent<PlayerStats>().PlayerTeam == bTeamsPerms.PlantingTeam && !id.GetComponent<PlayerHealth>().PlayerKilled)
         {
             if (SiteA.bounds.Contains(id.transform.position) || SiteB.bounds.Contains(id.transform.position) && !IsExploding)
             {
@@ -138,7 +154,7 @@ public class BombSystem : NetworkBehaviour
     [ServerCallback]
     public void CmdToggleDefuseBomb(bool tb, NetworkIdentity id)
     {
-        if(IsExploding && !IsDefusing || IsExploding && IsDefusing && !tb)
+        if((IsExploding && !IsDefusing || IsExploding && IsDefusing && !tb) && id.GetComponent<PlayerStats>().PlayerTeam == bTeamsPerms.DefusingTeam && !id.GetComponent<PlayerHealth>().PlayerKilled)
 		{
             if ((id.transform.position - bomb.transform.position).magnitude <= 2)
             {

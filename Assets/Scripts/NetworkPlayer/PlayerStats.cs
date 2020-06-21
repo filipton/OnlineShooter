@@ -62,11 +62,11 @@ public class PlayerStats : NetworkBehaviour
         NetworkSync ns = GetComponent<NetworkSync>();
         if(PlayerTeam == Team.Team1)
         {
-            ns.TpPlayer(LocalSceneObjects.singleton.TeamASpawn.position);
+            ns.TpPlayer(LocalSceneObjects.singleton.TeamASpawn.position + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5)));
         }
         else if(PlayerTeam == Team.Team2)
         {
-            ns.TpPlayer(LocalSceneObjects.singleton.TeamBSpawn.position);
+            ns.TpPlayer(LocalSceneObjects.singleton.TeamBSpawn.position + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5)));
         }
 
         foreach (PlayerStats ps in FindObjectsOfType<PlayerStats>())

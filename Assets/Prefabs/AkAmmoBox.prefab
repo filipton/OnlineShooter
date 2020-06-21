@@ -79,6 +79,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   InMagazine: 30
+  MagazineAmmoType: 0
   C: {fileID: 0}
 --- !u!114 &5476806039886504274
 MonoBehaviour:
@@ -153,7 +154,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3046a6a4b322046488c6e9c560e98d5a, type: 2}
+  - {fileID: -485364370030480306, guid: deb9f747dd97aca46ac9a96b4a972d7e, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
