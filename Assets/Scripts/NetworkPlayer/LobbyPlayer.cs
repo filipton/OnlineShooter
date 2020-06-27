@@ -7,8 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class LobbyPlayer : NetworkBehaviour
 {
-    [SyncVar]
-    public string Nick;
+    [SyncVar] public string Nick;
 
     public string _token;
 
@@ -45,8 +44,28 @@ public class LobbyPlayer : NetworkBehaviour
             string nick = oldPlayer.GetComponent<LobbyPlayer>().Nick;
             string token = oldPlayer.GetComponent<LobbyPlayer>()._token;
 
+            LobbyTeamSelection stl = FindObjectOfType<LobbyTeamSelection>();
+            int ta = stl.PlayersInTeamA.FindIndex(x => x == nick);
+            int tb = stl.PlayersInTeamB.FindIndex(x => x == nick);
+            Team selectedTeam = Team.WithoutTeam;
+
+            if(ta > -1)
+			{
+                selectedTeam = Team.Team1;
+			}
+            else if (tb > -1)
+            {
+                selectedTeam = Team.Team2;
+            }
+
+            print(selectedTeam);
+
             NetworkServer.ReplacePlayerForConnection(conn, Instantiate(PlayerPrefab));
             PlayerStats ps = conn.identity.GetComponent<PlayerStats>();
+            if(selectedTeam != Team.WithoutTeam)
+			{
+                ps.PlayerSetTeam = selectedTeam;
+            }
             ps.SetNick(nick);
             ps._token = token;
 
@@ -69,6 +88,14 @@ public class LobbyPlayer : NetworkBehaviour
                 KickPlayerWithMsg($"Kicked from server: {VersionKickMessage(msV)}");
 			}
         }
+	}
+
+    [Command]
+    public void CmdSelectTeam(Team t)
+	{
+        LobbyTeamSelection lts = FindObjectOfType<LobbyTeamSelection>();
+
+        lts.SelectTeam(Nick, t);
 	}
 
     [ServerCallback]

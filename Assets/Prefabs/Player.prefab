@@ -1998,6 +1998,7 @@ MonoBehaviour:
   syncInterval: 0.1
   Health: 100
   PlayerKilled: 0
+  damageFromPlayers: []
   KSphere: {fileID: 1447860902522100677, guid: bd879165e08b8d84ab99a5bbf0b786f8, type: 3}
   Capsule: {fileID: 5786514638354079050}
   Container: {fileID: 5786514638354079083}
@@ -2063,6 +2064,7 @@ MonoBehaviour:
   Deaths: 0
   Money: 800
   PlayerTeam: 0
+  PlayerSetTeam: 0
 --- !u!114 &238771155538111928
 MonoBehaviour:
   m_ObjectHideFlags: 0

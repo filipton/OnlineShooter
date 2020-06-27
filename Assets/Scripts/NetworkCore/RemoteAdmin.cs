@@ -1,8 +1,10 @@
-﻿using Mirror;
+﻿using Discord;
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class RemoteAdmin : NetworkBehaviour
 {
@@ -50,6 +52,12 @@ public class RemoteAdmin : NetworkBehaviour
                             PlayerStats ps = id.GetComponent<PlayerStats>();
                             ps.AddMoney(moneyCount);
                             ret = $"Player {Nick} got {moneyCount} money! Player money: {ps.Money}.";
+                            break;
+                        case "kill":
+                            PlayerHealth ph = id.GetComponent<PlayerHealth>();
+                            PlayerStats pss = id.GetComponent<PlayerStats>();
+                            ph.CmdRemoveHealth(1000, pss);
+                            ret = $"You killed the player with name: {pss.Nick}.";
                             break;
                     }
                 }

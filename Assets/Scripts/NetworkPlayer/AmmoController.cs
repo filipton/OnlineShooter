@@ -120,7 +120,7 @@ public class AmmoController : NetworkBehaviour
     public void CmdPickupAmmoBox(GameObject gbAmmoBox)
     {
         AmmoBox ab = gbAmmoBox.GetComponent<AmmoBox>();
-        if(ab != null && (transform.position - gbAmmoBox.transform.position).sqrMagnitude < 3*3 && GetCurrentAmmoInPlayer() < WeaponStats.GetMaxInPlayer(weaponController.CurrentAmmoType) && !ab.ph.PlayerKilled)
+        if(ab != null && (transform.position - gbAmmoBox.transform.position).sqrMagnitude < 3*3 && GetCurrentAmmoInPlayer() < WeaponStats.GetMaxInPlayer(weaponController.CurrentAmmoType) && !playerHealth.PlayerKilled)
         {
             int max = WeaponStats.GetMaxInPlayer(ab.MagazineAmmoType);
 

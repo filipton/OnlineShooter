@@ -50,8 +50,7 @@ public class ServerList : MonoBehaviour
 
         CNM = FindObjectOfType<CustomNetworkManager>();
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        CursorManager.RefreshLock("_sl", false);
 
         servers = GetAllServers(new WebClient().DownloadString("http://34.89.232.15/servers.json")).ToList();
 

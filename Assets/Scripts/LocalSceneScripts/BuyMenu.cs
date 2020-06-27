@@ -23,8 +23,7 @@ public class BuyMenu : MonoBehaviour
                 ps = es.GetComponent<PlayerStats>();
             }
 
-            Cursor.lockState = BuyMenuGB.activeSelf ? CursorLockMode.Locked : CursorLockMode.None;
-            Cursor.visible = !BuyMenuGB.activeSelf;
+            CursorManager.RefreshLock("_bm", BuyMenuGB.activeSelf);
 
             MoneyText.text = ps.Money.ToString();
             BuyMenuGB.SetActive(!BuyMenuGB.activeSelf);

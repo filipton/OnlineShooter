@@ -1,6 +1,7 @@
 ﻿using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -29,8 +30,8 @@ public class LobbyManager : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        CursorManager.RemoveAll();
+        CursorManager.RefreshLock("_lm", false);
 
         if (isServer)
 		{
@@ -90,4 +91,9 @@ public class LobbyManager : NetworkBehaviour
 
         SceneManager.LoadScene("Menu");
 	}
+
+    public void ButtonSelectTeam(int i)
+    {
+        FindObjectsOfType<LobbyPlayer>().ToList().Where(x => x.isLocalPlayer).First().CmdSelectTeam((Team)i);
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,20 @@ using UnityEngine;
 using UnityEngine.Networking.Types;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
+
+[Serializable]
+public struct DamageFromPlayer
+{
+    public string Nick;
+    public int Damage;
+
+    public DamageFromPlayer(string nick, int damage)
+	{
+        Nick = nick;
+        Damage = damage;
+	}
+}
 
 public class PlayerHealth : NetworkBehaviour
 {
@@ -14,6 +29,8 @@ public class PlayerHealth : NetworkBehaviour
     public int Health = 100;
     [SyncVar]
     public bool PlayerKilled;
+
+    public List<DamageFromPlayer> damageFromPlayers = new List<DamageFromPlayer>();
 
     bool KillPlayer;
 
@@ -52,6 +69,11 @@ public class PlayerHealth : NetworkBehaviour
     public void CmdRemoveHealth(int amount, PlayerStats damagingPlayer)
     {
         Health -= amount;
+		if (isServerOnly)
+		{
+            damageFromPlayers.Add(new DamageFromPlayer(damagingPlayer.Nick, (short)amount));
+        }
+        RpcAddToDamagesFromPlayers(damagingPlayer.Nick, (short)amount);
 
         if(Health <= 0 && !PlayerKilled)
         {
@@ -69,32 +91,50 @@ public class PlayerHealth : NetworkBehaviour
 
             ps.Deaths += 1;
             ps.AddMoney(300);
-            damagingPlayer.Kills += 1;
-            damagingPlayer.AddMoney(1000);
+
+            if (ps != damagingPlayer)
+			{
+                damagingPlayer.Kills += 1;
+                damagingPlayer.AddMoney(1000);
+            }
+
             RoundController.singleton.CheckIfAnyTeamWin();
         }
     }
 
     [ClientRpc]
-    public void RpcKillFeed(string player1, string player2, Weapon w)
+    public void RpcKillFeed(string playerKilled, string playerDealtDamage, Weapon w)
     {
         GameObject kf = Instantiate(LocalSceneObjects.singleton.KF_Prefab, LocalSceneObjects.singleton.KF_Parent.transform);
-        kf.GetComponentInChildren<TextMeshProUGUI>().text = $"{player2} ︻╦╤─ {player1}";
+        kf.GetComponentInChildren<TextMeshProUGUI>().text = $"{playerDealtDamage} ︻╦╤─ {playerKilled}";
         Destroy(kf, 5f);
-    }
 
-    [Command]
-    public void CmdRespawnPlayer()
-    {
-        if(Health <= 0)
-        {
-            PlayerKilled = false;
-            Health = 100;
-            GetComponent<OnlineShooting>().HitBoxes.ToList().ForEach(delegate (HitBox hb)
+		if (isLocalPlayer)
+		{
+            foreach (PlayerStats ps in FindObjectsOfType<PlayerStats>())
             {
-                hb.GetComponent<MeshCollider>().enabled = true;
-            });
-            RpcRespawnPlayer();
+                if (ps.Nick == playerDealtDamage)
+                {
+                    int hitsCount = 0;
+                    int hitsDamage = 0;
+
+                    List<DamageFromPlayer> dfps = ps.GetComponent<PlayerHealth>().damageFromPlayers;
+
+                    foreach (DamageFromPlayer dfp in dfps)
+                    {
+                        if (dfp.Nick == playerKilled)
+                        {
+                            hitsCount++;
+                            hitsDamage += dfp.Damage;
+                        }
+                    }
+
+                    if (hitsCount > 0)
+                    {
+                        SMessageBox.singleton.ShowMessageBox($"Player {playerDealtDamage} killed you with {w}", $"You dealt him {hitsDamage} hp in {hitsCount} shots.", 2.5f);
+                    }
+                }
+            }
         }
     }
 
@@ -113,8 +153,7 @@ public class PlayerHealth : NetworkBehaviour
 
         if (isLocalPlayer)
         {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            CursorManager.RefreshLock("_pdead", false);
 
             GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSync>().clip("real-death-sound"));
         }
@@ -130,12 +169,23 @@ public class PlayerHealth : NetworkBehaviour
             pl.CurrentPlayer = pl.players.FindIndex(x => x.Name == GetComponent<PlayerStats>().Nick);
             pl.UpdateCam();
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            CursorManager.RefreshLock("_pdead", true);
         }
         else
         {
             Capsule.SetActive(true);
         }
+    }
+
+    [ClientRpc]
+    public void RpcAddToDamagesFromPlayers(string nick, short dmg)
+	{
+        damageFromPlayers.Add(new DamageFromPlayer(nick, dmg));
+	}
+
+    [ClientRpc]
+    public void RpcClearDamagesFromPlayers()
+    {
+        damageFromPlayers.Clear();
     }
 }

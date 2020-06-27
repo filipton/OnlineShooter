@@ -26,37 +26,45 @@ public class PlayerStats : NetworkBehaviour
     [SyncVar] public int Money = 800;
     [SyncVar] public Team PlayerTeam;
 
+    [HideInInspector] public Team PlayerSetTeam;
+
     private void Start()
     {
         if (isLocalPlayer) GetComponent<OverwatchPlayer>().StartOverWatch();
-        if (isServer) AutoSelectTeam();
     }
 
 	[ServerCallback]
     void AutoSelectTeam()
     {
-        int Team1P = 0;
-        int Team2P = 0;
+        if(PlayerSetTeam != Team.WithoutTeam)
+		{
+            PlayerTeam = PlayerSetTeam;
+		}
+		else
+		{
+            int Team1P = 0;
+            int Team2P = 0;
 
-        foreach(PlayerStats ps in FindObjectsOfType<PlayerStats>())
-        {
-            if(ps.PlayerTeam == Team.Team1)
+            foreach (PlayerStats ps in FindObjectsOfType<PlayerStats>())
             {
-                Team1P += 1;
+                if (ps.PlayerTeam == Team.Team1)
+                {
+                    Team1P += 1;
+                }
+                else if (ps.PlayerTeam == Team.Team2)
+                {
+                    Team2P += 1;
+                }
             }
-            else if (ps.PlayerTeam == Team.Team2)
-            {
-                Team2P += 1;
-            }
-        }
 
-        if(Team1P == Team2P || Team1P < Team2P)
-        {
-            PlayerTeam = Team.Team1;
-        }
-        else if(Team1P > Team2P)
-        {
-            PlayerTeam = Team.Team2;
+            if (Team1P == Team2P || Team1P < Team2P)
+            {
+                PlayerTeam = Team.Team1;
+            }
+            else if (Team1P > Team2P)
+            {
+                PlayerTeam = Team.Team2;
+            }
         }
 
         NetworkSync ns = GetComponent<NetworkSync>();
@@ -128,6 +136,8 @@ public class PlayerStats : NetworkBehaviour
         if (Nick == string.Empty && !string.IsNullOrEmpty(nick))
         {
             Nick = nick;
+
+            AutoSelectTeam();
         }
         else
         {

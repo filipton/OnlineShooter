@@ -51,8 +51,7 @@ public class RemoteConsole : MonoBehaviour
         {
             ConsoleRoot.SetActive(!ConsoleRoot.activeSelf);
 
-            Cursor.lockState = ConsoleRoot.activeSelf ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = ConsoleRoot.activeSelf ? true : false;
+            CursorManager.RefreshLock("_crw", !ConsoleRoot.activeSelf);
         }
     }
 

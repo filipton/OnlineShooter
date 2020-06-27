@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 [Serializable]
 public struct RTeamsPerms
@@ -26,12 +27,15 @@ public class RoundController : NetworkBehaviour
     public float RoundTime = 150f;
     public int WinRoundCount = 15;
 
+    bool RoundWin = false;
+
     [Header("Permissions")]
     public List<RTeamsPerms> teamsPermissions = new List<RTeamsPerms>();
 
     private void Start()
     {
         singleton = this;
+        CursorManager.RemoveAll();
 
         if(isServer)
 		{
@@ -80,59 +84,69 @@ public class RoundController : NetworkBehaviour
     [ServerCallback]
     public void CheckIfAnyTeamWin()
     {
-        bool Team1Win = false;
-        bool Team2Win = false;
-
-        Team WinTeam = Team.WithoutTeam;
-        BombSystem bs = FindObjectOfType<BombSystem>();
-        foreach (RTeamsPerms tp in teamsPermissions)
-        {
-            if ((tp.WinAfterRunOutOfTimeAndBombNotExploeded && RoundTimeReaming <= 0) || (tp.WinAfterBombExploded && bs.IsExploding && bs.m_bombExplosionTime >= bs.BombExplosionTime) || (tp.WinAfterBombDefused && bs.IsDefusing && bs.m_defusingTime >= bs.DefusingTime))
-            {
-                if (tp.team == Team.Team1) Team1Win = true;
-                else if (tp.team == Team.Team2) Team2Win = true;
-                goto skip_point;
-            }
-        }
-
-		if (!bs.IsExploding)
+		if (!RoundWin)
 		{
-            foreach (PlayerList pl in FindObjectsOfType<PlayerList>())
+            bool Team1Win = false;
+            bool Team2Win = false;
+
+            Team WinTeam = Team.WithoutTeam;
+            BombSystem bs = FindObjectOfType<BombSystem>();
+            foreach (RTeamsPerms tp in teamsPermissions)
             {
-                if (pl.ps.PlayerTeam == Team.Team1 && !pl.ph.PlayerKilled)
+                if ((tp.WinAfterRunOutOfTimeAndBombNotExploeded && RoundTimeReaming <= 0) || (tp.WinAfterBombExploded && bs.IsExploding && bs.m_bombExplosionTime >= bs.BombExplosionTime) || (tp.WinAfterBombDefused && bs.IsDefusing && bs.m_defusingTime >= bs.DefusingTime))
+                {
+                    if (tp.team == Team.Team1) Team1Win = true;
+                    else if (tp.team == Team.Team2) Team2Win = true;
+                    goto skip_point;
+                }
+            }
+
+            if (!bs.IsExploding)
+            {
+                foreach (PlayerList pl in FindObjectsOfType<PlayerList>())
+                {
+                    if (pl.ps.PlayerTeam == Team.Team1 && !pl.ph.PlayerKilled)
+                    {
+                        Team1Win = true;
+                    }
+                    else if (pl.ps.PlayerTeam == Team.Team2 && !pl.ph.PlayerKilled)
+                    {
+                        Team2Win = true;
+                    }
+                }
+
+                if (!Team1Win && !Team2Win)
                 {
                     Team1Win = true;
                 }
-                else if (pl.ps.PlayerTeam == Team.Team2 && !pl.ph.PlayerKilled)
+            }
+
+
+            skip_point:
+
+            if (Team1Win != Team2Win)
+            {
+                RoundWin = true;
+
+                if (Team1Win) { WinTeam = Team.Team1; }
+                else if (Team2Win) { WinTeam = Team.Team2; }
+
+                AddWins(WinTeam);
+
+                bool IsTeam1GameWin = Team1Wins >= WinRoundCount;
+                bool IsTeam2GameWin = Team2Wins >= WinRoundCount;
+
+                if (IsTeam1GameWin || IsTeam2GameWin)
                 {
-                    Team2Win = true;
+                    StartCoroutine(EndGame(10f));
                 }
+                else
+                {
+                    StartCoroutine(EndRound(5f));
+                }
+
+                RoundTimeReaming = RoundTime + 5f;
             }
-        }
-
-
-        skip_point:
-
-        if (Team1Win != Team2Win)
-        {
-            if (Team1Win) { WinTeam = Team.Team1; }
-            else if (Team2Win) { WinTeam = Team.Team2; }
-
-            AddWins(WinTeam);
-
-            bool IsTeam1GameWin = Team1Wins >= WinRoundCount;
-            bool IsTeam2GameWin = Team2Wins >= WinRoundCount;
-
-            if (IsTeam1GameWin || IsTeam2GameWin)
-            {
-                StartCoroutine(EndGame(10f));
-            }
-            else
-            {
-                StartCoroutine(EndRound(5f));
-            }
-
-            RoundTimeReaming = RoundTime + 5f;
         }
     }
 
@@ -159,11 +173,11 @@ public class RoundController : NetworkBehaviour
 
             if (p.PlayerTeam == Team.Team1)
             {
-                ns.TpPlayer(LocalSceneObjects.singleton.TeamASpawn.position);
+                ns.TpPlayer(LocalSceneObjects.singleton.TeamASpawn.position + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5)));
             }
             else if (p.PlayerTeam == Team.Team2)
             {
-                ns.TpPlayer(LocalSceneObjects.singleton.TeamBSpawn.position);
+                ns.TpPlayer(LocalSceneObjects.singleton.TeamBSpawn.position + new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5)));
             }
 
             ph.PlayerKilled = false;
@@ -173,7 +187,15 @@ public class RoundController : NetworkBehaviour
                 hb.GetComponent<MeshCollider>().enabled = true;
             });
             ph.RpcRespawnPlayer();
+            ph.RpcClearDamagesFromPlayers();
+
+			if (isServerOnly)
+			{
+                ph.damageFromPlayers.Clear();
+            }
         }
+
+        RoundWin = false;
     }
 
     [ServerCallback]

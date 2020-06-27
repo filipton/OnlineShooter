@@ -572,6 +572,7 @@ MonoBehaviour:
   MessageBox: {fileID: 351645497}
   TitleText: {fileID: 1116660930}
   DescriptionText: {fileID: 1042883117}
+  cg: {fileID: 1683703529}
 --- !u!4 &325649380
 Transform:
   m_ObjectHideFlags: 0
@@ -2885,9 +2886,9 @@ MonoBehaviour:
   m_fontSize: 25
   m_fontSizeBase: 25
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 15
+  m_fontSizeMax: 25
   m_fontStyle: 1
   m_textAlignment: 513
   m_characterSpacing: 0
@@ -3904,6 +3905,7 @@ GameObject:
   - component: {fileID: 1683703526}
   - component: {fileID: 1683703528}
   - component: {fileID: 1683703527}
+  - component: {fileID: 1683703529}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -3967,6 +3969,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1683703525}
   m_CullTransparentMesh: 0
+--- !u!225 &1683703529
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1683703525}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1740473304
 GameObject:
   m_ObjectHideFlags: 0

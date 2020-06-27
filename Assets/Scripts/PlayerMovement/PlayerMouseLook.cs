@@ -29,8 +29,7 @@ public class PlayerMouseLook : MonoBehaviour
         sensitivityX = PlayerPrefs.GetFloat("X", 1);
         sensitivityY = PlayerPrefs.GetFloat("Y", 1);
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        CursorManager.RefreshLock("_pdead", true);
     }
 
     void Update()
@@ -63,16 +62,7 @@ public class PlayerMouseLook : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Esc = !Esc;
-            if (Esc)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+            CursorManager.RefreshLock("_esc", !Esc);
         }
     }
     public static float ClampAngle(float angle, float min, float max)
