@@ -1,0 +1,69 @@
+---NEW FEATURES---
+-Added map "so_revolution"
+-Added php login & register system (ready to implement to the game)
+-Added new weapon models
+-Added basic bomb system
+-Added basics of LoginSystem (to fully implement)
+-Added new SerializationManager (for saving things)
+-Added EditorTools
+-Added saving when changing scene from C-EditorTools
+-Added Bomb esplosion damage(for distnace)
+-Added new knife system
+-Added Lobby with lobby player, lobby manager and lobby auth
+-Added Login scene
+-Added fully working login and register system
+-Added custom player spawning
+-Added fully working bomb system with "bomb" model (dev only model)
+-Added minimap
+-Added sniper scope
+-Added hit marker
+-Added footsteps (to rework)
+-Added voice chat (in lobby global, in game per team)
+-Added ammo buying system
+-Added dropping weapons (to fix)
+-Added round time
+-Added player head rotation
+-Added CursorManager (for better cursor lock)
+-Added Dealt Damage Box (for showing dealt damage to player who killed you)
+-Added Lobby Team Selection (for testing purposes only)
+-Added "new" winning system
+
+---CHANGES---
+-Changed NetworkSync (CmdMovePlayer is now in Update())
+-Deleted old scenes
+-Deleted old player model (skeleton)
+-Deleted old weapons models (these from asset store)
+-Changed scope sensitivity (0.5 of normal sens)
+
+---FIXES---
+-Fixed "speed hack" (when player move diagonal)
+-Fixed Shooting in Local Server(Host & Play) (shoot cooldown)
+-Fixed shooting in multiplayer (NetworkSync bug)
+-Fixed NetworkSync bug(reverse rotation on server)
+-Fixed PlayerList script (not updating)
+-Fixed PlayerHealth script
+-Fixed NetworkSync again (xRot on server was inverted)
+-Fixed EditorTools (not showing up after reopening project)
+-Fixed SMessageBox (DontDestroyOnLoad)
+-Fixed CustomNetworkManager (DontDestroyOnLoad)
+-Fixed kill feed nicks positions
+-Fixed network spawning of bomb
+-Fixed bomb time display
+-Fixed not precision network rotation in NetworkSync (from sbyte, short to floats) [from 120 to 160 bits per packet]
+-Fixed bomb planting and defusing
+-Fixed droping weapons
+-Fixed pickup weapons bug
+-Fixed weapons doesn't despawning after end of round
+-Fixed player spawning (player spawning in them selfs)
+-Fixed reloading and pickuping ammo after dead
+-Fixed bomb planting and defusing by all players
+-Fixed player spawning after first round (player spawning in them selfs)
+-Fixed pickuping ammo boxes
+
+-Optimized NetworkSync code
+-Optimized NetworkSync Code (from 352bits to 120bits [Per packet])
+-Optimized ammo showing(not in Update method)
+
+---REMAKES---
+-Remaked crosshair
+-Remaked ammo system (now its like in apex)

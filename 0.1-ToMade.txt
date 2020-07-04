@@ -1,0 +1,12 @@
+-----99%-----
+-CHANGE CODE STRUCTURE (FOR BETTER READING) (add method thats return winning team instead all in one method)
+-Add new sounds (weapons)
+-Add better weapon holding (for every weapon, other hand positions)
+-Add radioactive weapon (at least 1)
+
+
+-----MAYBE-----
+-Maybe add matchmaking system (with carrier[for showing match stats])
+-Maybe add Inverse Kinematics (for walking etc.)
+-Maybe add better recoil
+-Maybe add another map(s)

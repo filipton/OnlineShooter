@@ -1,4 +1,5 @@
-﻿using Dissonance;
+﻿using Discord;
+using Dissonance;
 using Mirror;
 using Mirror.Websocket;
 using System.Collections;
@@ -31,6 +32,8 @@ public class PlayerStats : NetworkBehaviour
     private void Start()
     {
         if (isLocalPlayer) GetComponent<OverwatchPlayer>().StartOverWatch();
+
+        if(isServer) SavePlayerStats.singleton.AddPlayerToStats(new SavedPlayerStats(Nick, PlayerTeam, Money, Kills, Deaths));
     }
 
 	[ServerCallback]
@@ -125,6 +128,7 @@ public class PlayerStats : NetworkBehaviour
         {
             Money = 15000;
         }
+        SavePlayerStats.singleton.AddPlayerToStats(new SavedPlayerStats(Nick, PlayerTeam, Money, Kills, Deaths));
     }
 
     [Command]
@@ -136,6 +140,23 @@ public class PlayerStats : NetworkBehaviour
         if (Nick == string.Empty && !string.IsNullOrEmpty(nick))
         {
             Nick = nick;
+
+            //check if player is saved 
+            int index = SavePlayerStats.singleton.savedPlayerStats.FindIndex(x => x.Name == nick);
+
+            if (index > -1)
+            {
+                SavedPlayerStats sps = SavePlayerStats.singleton.savedPlayerStats[index];
+
+                Kills = sps.Kills;
+                PlayerSetTeam = sps.Team;
+                Deaths = sps.Deaths;
+                Money = sps.Money;
+            }
+            else
+            {
+                SavePlayerStats.singleton.AddPlayerToStats(new SavedPlayerStats(Nick, PlayerTeam, Money, Kills, Deaths));
+            }
 
             AutoSelectTeam();
         }

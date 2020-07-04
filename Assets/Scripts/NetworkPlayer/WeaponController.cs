@@ -13,7 +13,8 @@ public enum Weapon
     Kernel,
     AWP,
     Shotgun1,
-    Shotgun2
+    Shotgun2,
+    Radian
 }
 
 public enum AmmoType
@@ -154,6 +155,8 @@ public class WeaponStats
                 return 0.416f;
             case Weapon.Shotgun2:
                 return 0.585f;
+            case Weapon.Radian:
+                return 0.8f;
         }
 
         return 100;
@@ -211,6 +214,8 @@ public class WeaponStats
                 return 1.25f;
             case Weapon.Shotgun2:
                 return 0.85f;
+            case Weapon.Radian:
+                return 0.6f;
         }
 
         return 0;
@@ -234,6 +239,8 @@ public class WeaponStats
                 return 2000;
             case Weapon.Shotgun2:
                 return 2250;
+            case Weapon.Radian:
+                return 3050;
         }
 
         return 0;
@@ -257,6 +264,8 @@ public class WeaponStats
                 return AmmoType.Light;
             case Weapon.Shotgun2:
                 return AmmoType.Light;
+            case Weapon.Radian:
+                return AmmoType.Radioactive;
         }
 
         return 0;
@@ -280,6 +289,8 @@ public class WeaponStats
                 return false;
             case Weapon.Shotgun2:
                 return false;
+            case Weapon.Radian:
+                return true;
         }
 
         return false;
